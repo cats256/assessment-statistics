@@ -1,12 +1,12 @@
+# unoptimized code, for research purpose, not for production
+
 library(logitnorm)
-logit_norm_loss <- function(parameters, quantiles, observed_values) {
+logit_norm_loss <- function(parameters, quantiles, observed_values, scale) {
   mean <- parameters[1]
   standard_deviation <- parameters[2]
   
-  # transformed data using the logit function and calculate SSE
-  observed_values <- observed_values/84
   expected_values <- qlogitnorm(quantiles, mu = mean, sigma = standard_deviation)
-  squared_differences <- (log(observed_values/(1-observed_values)) - log(expected_values/(1-expected_values)))^2
+  squared_differences <- (logit(observed_values/scale) - logit(expected_values))^2
 
   # expected_values <- 84 * qlogitnorm(quantiles, mu = mean, sigma = standard_deviation)
   # squared_differences <- (observed_values - expected_values)^2
@@ -29,7 +29,7 @@ observed_values <- c(56.87, 64.25, 70.59)
 initial_parameters <- c(1.19257434039492, 0.677460313863577)
 optimization_result <- optim(
   par = initial_parameters, fn = logit_norm_loss,
-  quantiles = quantiles, observed_values = observed_values
+  quantiles = quantiles, observed_values = observed_values, scale = scale
 )
 
 minimum_loss <- optimization_result$value
@@ -39,8 +39,8 @@ sd <- optimization_result$par[2]
 expected_values <- scale * qlogitnorm(quantiles, mu = mean, sigma = sd)
 
 # transformed using the logit function
-transformed_observed <- log((observed_values/scale)/(1-(observed_values/scale)))
-transformed_expected <- log((expected_values/scale)/(1-(expected_values/scale)))
+transformed_observed <- logit(observed_values/scale)
+transformed_expected <- logit(expected_values/scale)
 
 print(paste("Minimum Loss:", minimum_loss))
 print(paste("Optimal Mean:", mean))
