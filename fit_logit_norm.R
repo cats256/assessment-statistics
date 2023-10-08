@@ -71,12 +71,15 @@ for (i in 1:length(mean_values)) {
     loss_matrix[i, j] <- logit_norm_loss(parameters, c(0.25, 0.50, 0.75), c(56.87, 64.25, 70.59), 84)
   }
 }
-print(logit_norm_loss(c(-4.346734, 6.18724), c(0.25, 0.50, 0.75), c(56.87, 64.25, 70.59), 84))
+# print(logit_norm_loss(c(-4.346734, 6.18724), c(0.25, 0.50, 0.75), c(56.87, 64.25, 70.59), 84))
+loss_values = as.vector(loss_matrix)
+mean_vector = rep(mean_values, times = length(std_deviation_values))
+std_deviation_vector = rep(std_deviation_values, each = length(mean_values))
 # Create a data frame for the loss values
 loss_data <- data.frame(
-  std_deviation = rep(std_deviation_values, times = length(mean_values)),
-  mean = rep(mean_values, each = length(std_deviation_values)),
-  loss = as.vector(loss_matrix)
+  mean = mean_vector,
+  std_deviation = std_deviation_vector,
+  loss = loss_values
 )
 
 # Create a 3D scatter plot using Plotly with a color scale
@@ -95,6 +98,6 @@ my_plot <- plotly::plot_ly(
 
 min_loss_row <- loss_data[which.min(loss_data$loss), ]
 my_plot <- my_plot %>% 
-  plotly::add_markers(data = min_loss_row, x = ~mean, y = ~std_deviation, z = ~loss, color = I("red"), size = 5)
+  plotly::add_markers(data = min_loss_row, x = ~std_deviation, y = ~mean, z = ~loss, color = I("red"), size = 5)
 
 print(my_plot)
