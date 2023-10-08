@@ -58,8 +58,8 @@ print(paste("Cumulative Probability at x = 78:", plogitnorm(c(78/84), mu = mean,
 library(plotly)
 
 # Define a grid of values for mean and standard_deviation
-mean_values <- seq(-5, 5, length.out = 200)  
-std_deviation_values <- seq(0.01, 10, length.out = 200)  
+mean_values <- seq(1.19354772770165-0.4, 1.19354772770165+0.4, length.out = 200)  
+std_deviation_values <- seq(0.01, 1.4, length.out = 200)  
 
 # Create an empty matrix to store the loss values
 loss_matrix <- matrix(NA, nrow = length(mean_values), ncol = length(std_deviation_values))
@@ -68,10 +68,10 @@ loss_matrix <- matrix(NA, nrow = length(mean_values), ncol = length(std_deviatio
 for (i in 1:length(mean_values)) {
   for (j in 1:length(std_deviation_values)) {
     parameters <- c(mean_values[i], std_deviation_values[j])
-    loss_matrix[i, j] <- logit_norm_loss(parameters, c(0.25, 0.50, 0.75), c(56.87, 64.25, 70.59), 84)
+    loss_matrix[i, j] <- logit_norm_loss(parameters, quantiles, observed_values, scale)
   }
 }
-# print(logit_norm_loss(c(-4.346734, 6.18724), c(0.25, 0.50, 0.75), c(56.87, 64.25, 70.59), 84))
+
 loss_values = as.vector(loss_matrix)
 mean_vector = rep(mean_values, times = length(std_deviation_values))
 std_deviation_vector = rep(std_deviation_values, each = length(mean_values))
@@ -93,11 +93,32 @@ my_plot <- plotly::plot_ly(
   marker = list(size = 5, color = ~loss, colorscale = "Viridis")
 ) %>%
   plotly::layout(
-    scene = list(xaxis = list(title = "Mean"), yaxis = list(title = "Standard Deviation"), zaxis = list(title = "Loss"))
+    scene = list(xaxis = list(title = "Standard Deviation"), yaxis = list(title = "Mean"), zaxis = list(title = "Loss"))
   )
 
 min_loss_row <- loss_data[which.min(loss_data$loss), ]
+# my_plot <- my_plot %>% 
+#   plotly::add_markers(data = min_loss_row, x = ~std_deviation, y = ~mean, z = ~loss, color = I("red"), size = 200)
+
+# my_plot <- my_plot %>% 
+#   plotly::add_markers(data = min_loss_row, x = ~std_deviation, y = ~mean, z = ~loss, color = I("red"), size = 200)
+
 my_plot <- my_plot %>% 
-  plotly::add_markers(data = min_loss_row, x = ~std_deviation, y = ~mean, z = ~loss, color = I("red"), size = 5)
+  plotly::add_markers(
+    data = min_loss_row,
+    x =  ~std_deviation,
+    y = ~mean,
+    z = ~loss,
+    color = I("red"), 
+    size = 1000,
+    marker = list(
+      color = I("red"),
+      size = 10,
+      line = list(
+        color = I("red"),
+        width = 200
+      )
+    )
+  )
 
 print(my_plot)
