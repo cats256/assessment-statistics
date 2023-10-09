@@ -5,6 +5,9 @@ from scipy.optimize import minimize
 import plotly.graph_objs as go
 
 
+# for a general informative view only, very high error at the tails
+
+
 def norm_loss(params, quantiles, logit_observations):
     mean, std = params
     expected_values = norm.ppf(quantiles, mean, std)
@@ -59,6 +62,7 @@ print("Standard Deviation:", std)
 print("Expected Values:", expected_values)
 print("Sum Squared Error (Logit-Normal):", np.sum((observed_values - expected_values) ** 2))
 print("Sum Squared Error (Normal):", np.sum((logit_observations - expected_norm) ** 2))
+print("Cumulative Probabillity for x = 78: ", norm.cdf(logit(81 / 84), mean, std))
 
 # n_points = 200
 # # very restricted range but this shows how the function is convex more neatly
