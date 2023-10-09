@@ -63,8 +63,8 @@ print("Sum Squared Error (Normal):", np.sum((logit_observations - expected_norm)
 # mean_range = np.linspace(1.19354772770165 - 0.4, 1.19354772770165 + 0.4, 100)
 # std_range = np.linspace(0.01, 1.4, 100)
 
-mean_range = np.linspace(-10, 10, 100)
-std_range = np.linspace(0.01, 10, 100)
+mean_range = np.linspace(mean - 0.4, mean + 0.4, 200)
+std_range = np.linspace(std - 0.6, std + 0.6, 200)
 
 mean_grid, std_grid = np.meshgrid(mean_range, std_range)
 
@@ -75,14 +75,31 @@ for i in range(len(mean_range)):
         loss_values[i, j] = norm_loss(params, quantiles, scaled_observations)
 
 fig = go.Figure(data=[go.Surface(z=loss_values, x=mean_grid, y=std_grid)])
+
+min_indices = np.unravel_index(loss_values.argmin(), loss_values.shape)
+
+min_mean = mean_grid[min_indices]
+min_std = std_grid[min_indices]
+
+fig.add_trace(
+    go.Scatter3d(
+        x=[min_mean],
+        y=[min_std],
+        z=[loss_values[min_indices]],
+        mode="markers",
+        marker=dict(size=5, color="red"),
+        name="Minimum Point",
+    )
+)
+
 fig.update_layout(
     scene=dict(
         xaxis_title="Mean",
         yaxis_title="Standard Deviation",
         zaxis_title="Loss",
-        xaxis=dict(range=[-10, 10]),
-        yaxis=dict(range=[0.01, 10]),
+        xaxis=dict(range=[mean - 0.4, mean + 0.4]),
+        yaxis=dict(range=[std - 0.6, std + 0.6]),
     )
 )
 
-fig.write_html("first_figure.html", auto_open=True)
+fig.write_html("logit_norm.html", auto_open=True)
