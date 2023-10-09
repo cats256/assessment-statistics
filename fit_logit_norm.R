@@ -22,6 +22,7 @@ logit_norm_loss <- function(parameters, quantiles, observed_values, scale) {
   # additive? i don't have enough data to answer and check for heteroskedasticity
   # but i believe it's the latter or it could be a mix of both. i don't know.
 
+  # edit: look at python file
   expected_values <- qlogitnorm(quantiles, mu = mean, sigma = standard_deviation)
   squared_differences <- (logit(observed_values/scale) - logit(expected_values))^2
 
