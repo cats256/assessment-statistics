@@ -134,6 +134,15 @@ print("Cumulative Probabillity for x = 78: ", norm.cdf(logit(81 / 84), mean, std
 x_values = np.linspace(0, 1, 1000)
 y_values = norm.pdf(logit(x_values), mean, std)
 
-fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Normal Distribution"))
+fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Logit-Normal Distribution"))
+
+observed_y_values = norm.pdf(logit(observed_values / scale), mean, std)
+fig.add_trace(go.Scatter(x=observed_values, y=observed_y_values, mode="markers", name="Observed Quantiles"))
+
+expected_y_values = norm.pdf(logit(expected_values / scale), mean, std)
+fig.add_trace(go.Scatter(x=expected_values, y=expected_y_values, mode="markers", name="Expected Quantiles"))
+
 fig.update_layout(title="Estimated Grade Distribution (Scaled Logit Normal)", xaxis_title="X", yaxis_title="PDF")
 fig.write_html("logit_norm_pdf.html", auto_open=True)
+
+# print(fig.to_html(full_html=False))

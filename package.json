@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  },
+  "dependencies": {
+    "plotly.js": "^2.26.2",
+    "react-plotly.js": "^2.6.0"
+  }
+}
