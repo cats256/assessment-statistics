@@ -1,10 +1,9 @@
 import "./index.css";
 import React, { useState, useEffect } from "react";
-import Plot from "./LocalPlot";
+import Plot from "./Plot";
 
 const App = () => {
     const [parameters, setParameters] = useState(false);
-
     const [inputValues, setInputValues] = useState({ lowerQuartile: "", median: "", upperQuartile: "" });
 
     const handleChange = (event) => {
@@ -15,7 +14,9 @@ const App = () => {
     };
 
     useEffect(() => {
-        if (!(inputValues.lowerQuartile && inputValues.median && inputValues.upperQuartile)) {
+        const { lowerQuartile, median, upperQuartile } = inputValues;
+
+        if (!(lowerQuartile && median && upperQuartile)) {
             return;
         }
 
