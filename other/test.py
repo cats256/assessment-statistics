@@ -1,8 +1,13 @@
 import numpy as np
-# from scipy.optimize import minimize
-# from scipy.stats import logitnorm, norm
+from scipy.optimize import minimize
+from scipy.stats import norm
+from scipy.special import expit, logit
+from scipy.special import erf
+from math import sqrt
 
-print("Something")
+print(norm.cdf(logit(0.87), 1.92, 0.21))
+print(1 / 2 * (1 + erf((logit(0.87) - 1.92) / sqrt(2 * 0.21**2))))
+# print("Something")
 # # Define the logit-normal loss function
 # def logit_norm_loss(parameters, quantiles, observed_values, scale):
 #     mean = parameters[0]

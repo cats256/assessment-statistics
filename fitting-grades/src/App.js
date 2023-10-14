@@ -46,7 +46,7 @@ const App = () => {
             <h2>Fitting Grades</h2>
             <div className="statistics">
                 <div>
-                    <table>
+                    <table style={{ border: "none" }}>
                         <tbody>
                             <tr>
                                 <td>
@@ -55,16 +55,30 @@ const App = () => {
                                 <td>
                                     <b>Grade</b>
                                 </td>
-                                <td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <b>&nbsp;</b>
                                 </td>
+                            </tr>
+                            <tr>
+                                <td>Min Possible Grade</td>
+                                <td>
+                                    <input id="minGrade" type="text" value={inputValues.minGrade} onChange={handleChange} />
+                                </td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>Max Possible Grade</td>
+                                <td>
+                                    <input id="maxGrade" type="text" value={inputValues.maxGrade} onChange={handleChange} />
+                                </td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>0.25</td>
                                 <td>
                                     <input id="lowerQuartile" type="text" value={inputValues.lowerQuartile} onChange={handleChange} />
                                 </td>
-                                <td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">delete</button>
                                 </td>
                             </tr>
@@ -73,7 +87,7 @@ const App = () => {
                                 <td>
                                     <input id="median" type="text" value={inputValues.median} onChange={handleChange} />
                                 </td>
-                                <td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">delete</button>
                                 </td>
                             </tr>
@@ -82,51 +96,79 @@ const App = () => {
                                 <td>
                                     <input id="upperQuartile" type="text" value={inputValues.upperQuartile} onChange={handleChange} />
                                 </td>
-                                <td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">delete</button>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3">&nbsp;</td>
+                                <td colspan="3" style={{ border: "none", backgroundColor: "transparent" }}>
+                                    &nbsp;
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
                                     <b>Summary Statistics</b>
                                 </td>
-                                <td>&nbsp;</td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>Mean</td>
                                 <td>{parameters && parameters.mean.toFixed(2)}</td>
-                                <td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                             <tr>
-                                <td>SD</td>
-                                <td>{parameters && parameters.std}</td>
-                                <td>
+                                <td>Mean Squared Error</td>
+                                <td>{parameters && parameters.mse.toFixed(2)}</td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                             <tr>
-                                <td>MSE</td>
-                                <td>{parameters && parameters.mse_logit_norm}</td>
-                                <td>
-                                    <button type="button">expand</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>MAE</td>
-                                <td>{parameters && parameters.mae_logit_norm}</td>
-                                <td>
+                                <td>Mean Absolute Error</td>
+                                <td>{parameters && parameters.mae.toFixed(2)}</td>
+                                <td style={{ border: "none", backgroundColor: "transparent" }}>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <Plot parameters={parameters} />
+                <div>
+                    <Plot parameters={parameters} />
+                    <div>
+                        <table style={{ border: "none" }}>
+                            <colgroup>
+                                <col style={{ width: "40%" }} />
+                                <col style={{ width: "40%" }} />
+                                <col style={{ width: "20%" }} />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <b>Logit-Normal Parameters</b>
+                                    </td>
+                                    <td style={{ border: "none", backgroundColor: "transparent" }}>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>Mean</td>
+                                    <td>{parameters && parameters.mean_logit_norm.toFixed(2)}</td>
+                                    <td style={{ border: "none", backgroundColor: "transparent" }}>
+                                        <button type="button">expand</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Standard Deviation</td>
+                                    <td>{parameters && parameters.std_logit_norm.toFixed(2)}</td>
+                                    <td style={{ border: "none", backgroundColor: "transparent" }}>
+                                        <button type="button">expand</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </>
     );
