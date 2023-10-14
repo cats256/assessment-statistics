@@ -36,6 +36,10 @@ def norm_loss(params, quantiles, logit_observations):
     return np.sum(squared_differences)
 
 
+def logit_norm_pdf(x, mean, std):
+    return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
+
+
 @app.route("/parameters", methods=["POST"])
 def parameters():
     lower_bound = 0
@@ -65,12 +69,16 @@ def parameters():
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
     expected_values = scale * expit(expected_norm)
 
-    x_values = np.linspace(0.00000, 1, 1000000)
+    step_size = 1000
+    x_values = np.linspace(0, 1, step_size)[1:-1]
     # y_values = norm.pdf(logit(x_values), mean, std)
-    y_values = 1 / (std * np.sqrt(2 * np.pi) * x_values * (1 - x_values)) * np.e ** (-((logit(x_values) - mean) ** 2) / (2 * std**2))
-
+    # y_values = 1 / (std * np.sqrt(2 * np.pi) * x_values * (1 - x_values)) * np.e ** (-((logit(x_values) - mean) ** 2) / (2 * std**2))
+    y_values = logit_norm_pdf(x_values, mean, std)
     # fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Normal Distribution"))
 
+    # observed_y_values = (
+    #     1 / (std * np.sqrt(2 * np.pi) * (observed_values / 84) * (1 - (observed_values / 84))) * np.e ** (-((logit((observed_values / 84)) - mean) ** 2) / (2 * std**2))
+    # )
     observed_y_values = norm.pdf(logit(observed_values / scale), mean, std)
     # fig.add_trace(go.Scatter(x=observed_values, y=observed_y_values, mode="markers", name="Observed Quantiles"))
 
@@ -78,15 +86,19 @@ def parameters():
     # fig.add_trace(go.Scatter(x=expected_values, y=expected_y_values, mode="markers", name="Expected Quantiles"))
 
     # fig.update_layout(title="Estimated Grade Distribution (Scaled Logit Normal)", xaxis_title="X", yaxis_title="PDF")
-    print("123")
-    print(np.sum(x_values * y_values) / np.sum(y_values) * 84)
-    print(np.sum(x_values * y_values / 1000000) * 84)
-    print("123")
+    print(expected_values)
+    print(mean)
+    print(std)
+    print(np.sum(x_values * y_values) / np.sum(y_values))
+    print(np.sum(x_values * y_values) / (step_size - 1))
+    print(observed_y_values)
+    # print(expit(mean) * 84)
     # print(np.sum(y_values))
     # print(x_values)
     # print(y_values)
     # print(np.sum(y_values / 10000) * 84)
     print(np.sum(y_values))
+    print(len(x_values))
     return jsonify(
         {
             "mean": mean,

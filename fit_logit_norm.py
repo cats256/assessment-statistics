@@ -64,43 +64,43 @@ print("Sum Squared Error (Logit-Normal):", np.sum((observed_values - expected_va
 print("Sum Squared Error (Normal):", np.sum((logit_observations - expected_norm) ** 2))
 print("Cumulative Probabillity for x = 78: ", norm.cdf(logit(81 / 84), mean, std))
 
-# n_points = 200
-# # very restricted range but this shows how the function is convex more neatly
-# mean_range = np.linspace(mean - 0.4, mean + 0.4, n_points)
-# std_range = np.linspace(std - 0.6, std + 0.6, n_points)
+n_points = 200
+# very restricted range but this shows how the function is convex more neatly
+mean_range = np.linspace(mean - 0.4, mean + 0.4, n_points)
+std_range = np.linspace(std - 0.6, std + 0.6, n_points)
 
-# mean_grid, std_grid = np.meshgrid(mean_range, std_range)
+mean_grid, std_grid = np.meshgrid(mean_range, std_range)
 
-# params = np.stack((mean_grid, std_grid), axis=-1)
-# loss_values = np.apply_along_axis(lambda p: norm_loss(tuple(p), quantiles, logit_observations), -1, params)
+params = np.stack((mean_grid, std_grid), axis=-1)
+loss_values = np.apply_along_axis(lambda p: norm_loss(tuple(p), quantiles, logit_observations), -1, params)
 
-# min_indices = np.unravel_index(loss_values.argmin(), loss_values.shape)
-# min_mean, min_std = mean_grid[min_indices], std_grid[min_indices]
+min_indices = np.unravel_index(loss_values.argmin(), loss_values.shape)
+min_mean, min_std = mean_grid[min_indices], std_grid[min_indices]
 
-# fig = go.Figure(data=[go.Surface(z=loss_values, x=mean_grid, y=std_grid, colorscale="Viridis")])
+fig = go.Figure(data=[go.Surface(z=loss_values, x=mean_grid, y=std_grid, colorscale="Viridis")])
 
-# fig.add_trace(
-#     go.Scatter3d(
-#         x=[min_mean],
-#         y=[min_std],
-#         z=[loss_values[min_indices]],
-#         mode="markers",
-#         marker=dict(size=5, color="red"),
-#         name="Minimum Point",
-#     )
-# )
+fig.add_trace(
+    go.Scatter3d(
+        x=[min_mean],
+        y=[min_std],
+        z=[loss_values[min_indices]],
+        mode="markers",
+        marker=dict(size=5, color="red"),
+        name="Minimum Point",
+    )
+)
 
-# fig.update_layout(
-#     scene=dict(
-#         xaxis_title="Mean",
-#         yaxis_title="Standard Deviation",
-#         zaxis_title="Loss",
-#         xaxis=dict(range=[mean - 0.4, mean + 0.4]),
-#         yaxis=dict(range=[std - 0.6, std + 0.6]),
-#     )
-# )
+fig.update_layout(
+    scene=dict(
+        xaxis_title="Mean",
+        yaxis_title="Standard Deviation",
+        zaxis_title="Loss",
+        xaxis=dict(range=[mean - 0.4, mean + 0.4]),
+        yaxis=dict(range=[std - 0.6, std + 0.6]),
+    )
+)
 
-# fig.write_html("logit_norm.html", auto_open=True)
+fig.write_html("logit_norm.html", auto_open=True)
 
 # contour = go.Contour(
 #     x=mean_range,
@@ -131,18 +131,18 @@ print("Cumulative Probabillity for x = 78: ", norm.cdf(logit(81 / 84), mean, std
 
 # fig.write_html("contour_plot.html", auto_open=True)
 
-x_values = np.linspace(0, 1, 1000)
-y_values = norm.pdf(logit(x_values), mean, std)
+# x_values = np.linspace(0, 1, 1000)
+# y_values = norm.pdf(logit(x_values), mean, std)
 
-fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Logit-Normal Distribution"))
+# fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Logit-Normal Distribution"))
 
-observed_y_values = norm.pdf(logit(observed_values / scale), mean, std)
-fig.add_trace(go.Scatter(x=observed_values, y=observed_y_values, mode="markers", name="Observed Quantiles"))
+# observed_y_values = norm.pdf(logit(observed_values / scale), mean, std)
+# fig.add_trace(go.Scatter(x=observed_values, y=observed_y_values, mode="markers", name="Observed Quantiles"))
 
-expected_y_values = norm.pdf(logit(expected_values / scale), mean, std)
-fig.add_trace(go.Scatter(x=expected_values, y=expected_y_values, mode="markers", name="Expected Quantiles"))
+# expected_y_values = norm.pdf(logit(expected_values / scale), mean, std)
+# fig.add_trace(go.Scatter(x=expected_values, y=expected_y_values, mode="markers", name="Expected Quantiles"))
 
-fig.update_layout(title="Estimated Grade Distribution (Scaled Logit Normal)", xaxis_title="X", yaxis_title="PDF")
-fig.write_html("logit_norm_pdf.html", auto_open=True)
+# fig.update_layout(title="Estimated Grade Distribution (Scaled Logit Normal)", xaxis_title="X", yaxis_title="PDF")
+# fig.write_html("logit_norm_pdf.html", auto_open=True)
 
 # print(fig.to_html(full_html=False))

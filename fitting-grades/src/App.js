@@ -104,21 +104,21 @@ const App = () => {
                             </tr>
                             <tr>
                                 <td>SD</td>
-                                <td>{parameters && parameters.std.toFixed(2)}</td>
+                                <td>{parameters && parameters.std}</td>
                                 <td>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>MSE</td>
-                                <td>{parameters && parameters.mse_logit_norm.toFixed(2)}</td>
+                                <td>{parameters && parameters.mse_logit_norm}</td>
                                 <td>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>MAE</td>
-                                <td>{parameters && parameters.mae_logit_norm.toFixed(2)}</td>
+                                <td>{parameters && parameters.mae_logit_norm}</td>
                                 <td>
                                     <button type="button">expand</button>
                                 </td>
