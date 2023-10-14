@@ -65,8 +65,9 @@ def parameters():
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
     expected_values = scale * expit(expected_norm)
 
-    x_values = np.linspace(0, 1, 1000)
-    y_values = norm.pdf(logit(x_values), mean, std)
+    x_values = np.linspace(0.00000, 1, 1000000)
+    # y_values = norm.pdf(logit(x_values), mean, std)
+    y_values = 1 / (std * np.sqrt(2 * np.pi) * x_values * (1 - x_values)) * np.e ** (-((logit(x_values) - mean) ** 2) / (2 * std**2))
 
     # fig = go.Figure(data=go.Scatter(x=scale * x_values, y=y_values, mode="lines", name="Normal Distribution"))
 
@@ -77,14 +78,23 @@ def parameters():
     # fig.add_trace(go.Scatter(x=expected_values, y=expected_y_values, mode="markers", name="Expected Quantiles"))
 
     # fig.update_layout(title="Estimated Grade Distribution (Scaled Logit Normal)", xaxis_title="X", yaxis_title="PDF")
-
+    print("123")
+    print(np.sum(x_values * y_values) / np.sum(y_values) * 84)
+    print(np.sum(x_values * y_values / 1000000) * 84)
+    print("123")
+    # print(np.sum(y_values))
+    # print(x_values)
+    # print(y_values)
+    # print(np.sum(y_values / 10000) * 84)
+    print(np.sum(y_values))
     return jsonify(
         {
             "mean": mean,
             "std": std,
             "expected_values": expected_values.tolist(),
-            "sse_logit_norm": np.sum((observed_values - expected_values) ** 2),
-            "sse_norm": np.sum((logit_observations - expected_norm) ** 2),
+            "mse_logit_norm": np.mean((observed_values - expected_values) ** 2),
+            "mse_norm": np.mean((logit_observations - expected_norm) ** 2),
+            "mae_logit_norm": np.mean(abs((observed_values - expected_values))),
             "x_values": x_values.tolist(),
             "y_values": y_values.tolist(),
             "observed_y_values": observed_y_values.tolist(),

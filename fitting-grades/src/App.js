@@ -45,23 +45,7 @@ const App = () => {
         <>
             <h2>Fitting Grades</h2>
             <div className="statistics">
-                {/* <form>
-                    <div>
-                        <label htmlFor="lowerQuartile">Lower Quartile:</label>
-                        <input id="lowerQuartile" type="text" value={inputValues.lowerQuartile} onChange={handleChange} />
-                    </div>
-                    <div>
-                        <label htmlFor="median">Median:</label>
-                        <input id="median" type="text" value={inputValues.median} onChange={handleChange} />
-                    </div>
-                    <div>
-                        <label htmlFor="upperQuartile">Upper Quartile:</label>
-                        <input id="upperQuartile" type="text" value={inputValues.upperQuartile} onChange={handleChange} />
-                    </div>
-                </form> */}
                 <div>
-                    <form method="GET" id="data"></form>
-
                     <table>
                         <tbody>
                             <tr>
@@ -70,6 +54,9 @@ const App = () => {
                                 </td>
                                 <td>
                                     <b>Grade</b>
+                                </td>
+                                <td>
+                                    <b>&nbsp;</b>
                                 </td>
                             </tr>
                             <tr>
@@ -100,20 +87,38 @@ const App = () => {
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="3">&nbsp;</td>
+                            </tr>
+                            <tr>
                                 <td colspan="2">
                                     <b>Summary Statistics</b>
                                 </td>
+                                <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>Mean</td>
-                                <td>{parameters.mean}</td>
+                                <td>{parameters && parameters.mean.toFixed(2)}</td>
                                 <td>
                                     <button type="button">expand</button>
                                 </td>
                             </tr>
                             <tr>
-                                <td>SSE</td>
-                                <td>{parameters.sse_norm}</td>
+                                <td>SD</td>
+                                <td>{parameters && parameters.std.toFixed(2)}</td>
+                                <td>
+                                    <button type="button">expand</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>MSE</td>
+                                <td>{parameters && parameters.mse_logit_norm.toFixed(2)}</td>
+                                <td>
+                                    <button type="button">expand</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>MAE</td>
+                                <td>{parameters && parameters.mae_logit_norm.toFixed(2)}</td>
                                 <td>
                                     <button type="button">expand</button>
                                 </td>
@@ -121,16 +126,7 @@ const App = () => {
                         </tbody>
                     </table>
                 </div>
-                {/* <div>
-                    <div>Mean = {parameters.mean}</div>
-                    <div>SSE = {parameters.sse_norm}</div>
-                </div> */}
-
                 <Plot parameters={parameters} />
-                {/* <div>
-                    <div>Mean = {parameters.mean}</div>
-                    <div>SSE = {parameters.sse_norm}</div>
-                </div> */}
             </div>
         </>
     );

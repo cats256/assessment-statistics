@@ -1,3 +1,4 @@
+Note: Just a warning that since I don't have much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD
 Stanford Computer Science and GradeScope https://files.eric.ed.gov/fulltext/ED599204.pdf
 https://chrispiech.github.io/probabilityForComputerScientists/en/examples/grades_not_normal/
 Why the logit normal?
