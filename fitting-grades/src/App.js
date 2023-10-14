@@ -44,8 +44,8 @@ const App = () => {
     return (
         <>
             <h2>Fitting Grades</h2>
-            <div>
-                <form>
+            <div className="statistics">
+                {/* <form>
                     <div>
                         <label htmlFor="lowerQuartile">Lower Quartile:</label>
                         <input id="lowerQuartile" type="text" value={inputValues.lowerQuartile} onChange={handleChange} />
@@ -58,11 +58,79 @@ const App = () => {
                         <label htmlFor="upperQuartile">Upper Quartile:</label>
                         <input id="upperQuartile" type="text" value={inputValues.upperQuartile} onChange={handleChange} />
                     </div>
-                </form>
-            </div>
-            <Plot parameters={parameters} />
-            <div>
-                Mean = {parameters.mean}&nbsp;&nbsp;&nbsp;&nbsp;Sum Squared Error = {parameters.sse_norm}
+                </form> */}
+                <div>
+                    <form method="GET" id="data"></form>
+
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <b>Quantile</b>
+                                </td>
+                                <td>
+                                    <b>Grade</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>0.25</td>
+                                <td>
+                                    <input id="lowerQuartile" type="text" value={inputValues.lowerQuartile} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <button type="button">delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>0.50</td>
+                                <td>
+                                    <input id="median" type="text" value={inputValues.median} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <button type="button">delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>0.75</td>
+                                <td>
+                                    <input id="upperQuartile" type="text" value={inputValues.upperQuartile} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <button type="button">delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <b>Summary Statistics</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Mean</td>
+                                <td>{parameters.mean}</td>
+                                <td>
+                                    <button type="button">expand</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>SSE</td>
+                                <td>{parameters.sse_norm}</td>
+                                <td>
+                                    <button type="button">expand</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {/* <div>
+                    <div>Mean = {parameters.mean}</div>
+                    <div>SSE = {parameters.sse_norm}</div>
+                </div> */}
+
+                <Plot parameters={parameters} />
+                {/* <div>
+                    <div>Mean = {parameters.mean}</div>
+                    <div>SSE = {parameters.sse_norm}</div>
+                </div> */}
             </div>
         </>
     );

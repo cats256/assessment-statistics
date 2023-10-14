@@ -9,6 +9,8 @@ const Plot = ({ parameters }) => {
         yaxis: {
             title: "Probability Density Function",
         },
+        width: 809,
+        height: 500,
     };
 
     let data = [];
@@ -18,7 +20,7 @@ const Plot = ({ parameters }) => {
             x: parameters.x_values.map((value) => value * 84),
             y: parameters.y_values,
             mode: "lines",
-            name: "Scaled Logit-Normal Distribution",
+            name: "Scaled Logit-Normal",
             showlegend: true,
         };
 
