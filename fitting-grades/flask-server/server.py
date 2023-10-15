@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, abort, jsonify
 from flask_cors import CORS
 
 import numpy as np
@@ -43,11 +43,18 @@ def logit_norm_pdf(x, mean, std):
 @app.route("/parameters", methods=["POST"])
 def parameters():
     lower_bound = 0
-    upper_bound = 84
+    upper_bound = 100
     scale = upper_bound - lower_bound
 
-    quantiles = np.array([0.25, 0.50, 0.75])
-    observed_values = np.array([float(value) for value in request.json.values()]) - lower_bound
+    sorted_dict = sorted(request.json["quantiles"].items(), key=lambda x: x[0])
+
+    quantiles = np.array([float(item[0]) for item in sorted_dict])
+    observed_values = np.array([float(item[1]) for item in sorted_dict]) - lower_bound
+
+    is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
+
+    if not is_sorted:
+        abort(400, "Invalid request: The observed values are not sorted.")
 
     logit_observations = logit(observed_values / scale)
 
@@ -75,6 +82,12 @@ def parameters():
     x_values = x_values_unscaled * scale
     y_values = y_values_unscaled / scale
 
+    sse = np.sum((observed_values - expected_values) ** 2)
+    sst = np.sum((observed_values - np.mean(observed_values)) ** 2)
+    r_square = 1 - sse / sst
+
+    print(expected_values.tolist())
+
     return jsonify(
         {
             "mean": np.sum(x_values * y_values) / (step_size - 1) * scale,  # can also do np.sum(x_values * y_values) / np.sum(y_values) * scale
@@ -82,13 +95,14 @@ def parameters():
             "std_logit_norm": std,
             "observed_values": observed_values.tolist(),
             "expected_values": expected_values.tolist(),
-            "mse": np.mean((observed_values - expected_values) ** 2),
+            "rmse": np.sqrt(sse / len(observed_values)),
             "mse_norm": np.mean((logit_observations - expected_norm) ** 2),
             "mae": np.mean(abs((observed_values - expected_values))),
             "x_values": x_values.tolist(),
             "y_values": y_values.tolist(),
             "observed_y_values": (logit_norm_pdf(observed_values / scale, mean, std) / scale).tolist(),
             "expected_y_values": (logit_norm_pdf(expected_values / scale, mean, std) / scale).tolist(),
+            "r_square": r_square,
         }
     )
 
