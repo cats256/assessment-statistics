@@ -41,6 +41,13 @@ const App = () => {
             });
     }, [inputValues]);
 
+    const handleDeleteRow = (e) => {
+        const row = e.target.closest("tr");
+        if (row) {
+            row.remove();
+        }
+    };
+
     return (
         <>
             <h2>Fitting Grades</h2>
@@ -88,7 +95,9 @@ const App = () => {
                                     <input id="median" type="text" value={inputValues.median} onChange={handleChange} />
                                 </td>
                                 <td style={{ border: "none", backgroundColor: "transparent" }}>
-                                    <button type="button">delete</button>
+                                    <button type="button" onClick={handleDeleteRow}>
+                                        delete
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
