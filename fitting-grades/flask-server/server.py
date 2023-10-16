@@ -32,7 +32,17 @@ def norm_loss(params, quantiles, logit_observations):
     # inherently wrong with non-convex function. i just don't like them. lesson learned:
     # don't forget to double check your assumptions XD
 
-    return np.sum(squared_differences)
+    # tried to use this but this is out of my expertise and package won't work and i'm too lazy
+    # https://github.com/rsnirwan/bqme
+    # https://arxiv.org/abs/2008.06423
+
+    # don't really know what to name this but it's variance calculated without sample
+    # size purely to figure out the weight to give to each quantile
+    # https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+    raw_variance = (quantiles * (1 - quantiles)) / (norm.pdf(expected_values, mean, std) ** 2)
+    weight = 1 / raw_variance
+
+    return np.sum(squared_differences * weight)
 
 
 def logit_norm_pdf(x, mean, std):
@@ -53,10 +63,13 @@ def parameters():
 
     is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
     if not is_sorted:
+        print("Invalid request: The observed values are not sorted.")
         abort(400, "Invalid request: The observed values are not sorted.")
 
-    is_range = all(lower_bound < observed_value < upper_bound for observed_value in observed_values)
+    is_range = all(0 < observed_value < scale for observed_value in observed_values)
     if not is_range:
+        print("Observed values are out of range")
+        print(observed_values)
         abort(400, "Observed values are out of range")
 
     logit_observations = logit(observed_values / scale)
@@ -76,13 +89,14 @@ def parameters():
 
     mean, std = optimization_result.x
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
-    expected_values = scale * expit(expected_norm)
+    expected_values = scale * expit(expected_norm) + lower_bound
+    observed_values = observed_values + lower_bound
 
     step_size = 1000
     x_values_unscaled = np.linspace(0, 1, step_size)[1:-1]
     y_values_unscaled = logit_norm_pdf(x_values_unscaled, mean, std)
 
-    x_values = x_values_unscaled * scale
+    x_values = x_values_unscaled * scale + lower_bound
     y_values = y_values_unscaled / scale
 
     sse = np.sum((observed_values - expected_values) ** 2)
@@ -111,8 +125,8 @@ def parameters():
             "mae": np.mean(abs((observed_values - expected_values))),
             "x_values": x_values.tolist(),
             "y_values": y_values.tolist(),
-            "observed_y_values": (logit_norm_pdf(observed_values / scale, mean, std) / scale).tolist(),
-            "expected_y_values": (logit_norm_pdf(expected_values / scale, mean, std) / scale).tolist(),
+            "observed_y_values": (logit_norm_pdf((observed_values - lower_bound) / scale, mean, std) / scale).tolist(),
+            "expected_y_values": (logit_norm_pdf((expected_values - lower_bound) / scale, mean, std) / scale).tolist(),
             "r_square": r_square,
             "cumulative": cumulative,
             "probability": probability,

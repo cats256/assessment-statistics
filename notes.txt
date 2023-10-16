@@ -1,3 +1,11 @@
+Links:
+https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+https://arxiv.org/abs/2008.06423
+https://files.eric.ed.gov/fulltext/ED599204.pdf
+https://chrispiech.github.io/probabilityForComputerScientists/en/examples/grades_not_normal/
+https://github.com/rsnirwan/bqme
+https://discourse.mc-stan.org/t/bayesian-quantile-matching-estimation-using-order-statistics/19187/4
+
 Note: Just a warning that since I don't have much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD
 Stanford Computer Science and GradeScope https://files.eric.ed.gov/fulltext/ED599204.pdf
 https://chrispiech.github.io/probabilityForComputerScientists/en/examples/grades_not_normal/

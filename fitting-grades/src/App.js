@@ -2,14 +2,14 @@ import "./index.css";
 import React, { useState, useEffect } from "react";
 import Plot from "./Plot";
 
-const DeleteButton = () => {
-    const handleDeleteRow = (e) => {
-        const row = e.target.closest("tr");
-        if (row) {
-            row.remove();
-        }
-    };
+const handleDeleteRow = (event) => {
+    const row = event.target.closest("tr");
+    if (row) {
+        row.remove();
+    }
+};
 
+const DeleteButton = () => {
     return (
         <td>
             <button type="button" onClick={handleDeleteRow}>
@@ -24,6 +24,20 @@ const App = () => {
     const [inputValues, setInputValues] = useState({ quantiles: {} });
     const [summaryTableExpanded, setSummaryTableExpanded] = useState(false);
     const [parametersTableExpanded, setParametersTableExpanded] = useState(false);
+    const [rows, setRows] = useState([]);
+
+    const handleAddRow = () => {
+        if (inputValues.quantile) {
+            setRows([...rows, [inputValues.quantile, inputValues.value]]);
+            setInputValues({ ...inputValues, quantile: "", value: "" });
+        }
+    };
+
+    const handleDeleteRowIndex = (index) => {
+        const updatedRows = [...rows];
+        updatedRows.splice(index, 1);
+        setRows(updatedRows);
+    };
 
     const handleChange = (event) => {
         if (isNaN(event.target.id)) {
@@ -31,7 +45,7 @@ const App = () => {
                 ...inputValues,
                 [event.target.id]: event.target.value,
             });
-        } else if (event.target.value == "") {
+        } else if (event.target.value === "") {
             const quantiles = { ...inputValues["quantiles"] };
             delete quantiles[event.target.id];
 
@@ -131,6 +145,19 @@ const App = () => {
                                 </td>
                                 <DeleteButton />
                             </tr>
+                            {rows.map((row, index) => (
+                                <tr key={index}>
+                                    <td>{row[0]}</td>
+                                    <td>
+                                        <input id={row[0]} type="text" onChange={handleChange} />
+                                    </td>
+                                    <td>
+                                        <button type="button" onClick={() => handleDeleteRowIndex(index)}>
+                                            delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
                             <tr>
                                 <td>x</td>
                                 <td>
@@ -141,6 +168,19 @@ const App = () => {
                                 <td>P(x)</td>
                                 <td>
                                     <input id="probability" type="text" value={inputValues.probabillity} onChange={handleChange} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="quantile" type="text" value={inputValues.quantile} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <input id="value" type="text" value={inputValues.value} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <button type="button" onClick={handleAddRow}>
+                                        add
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -177,7 +217,7 @@ const App = () => {
                             </tr>
                             <tr>
                                 <td colSpan="2">
-                                    <b>Performance Metrics</b>
+                                    <b>Model Performance</b>
                                 </td>
                                 <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
                                     <button type="button" onClick={toggleDisplaySummaryTable}>
