@@ -5,7 +5,6 @@ import numpy as np
 from scipy.stats import norm
 from scipy.special import expit, logit
 from scipy.optimize import minimize
-import plotly.graph_objs as go
 
 app = Flask(__name__)
 CORS(app)
@@ -42,19 +41,23 @@ def logit_norm_pdf(x, mean, std):
 
 @app.route("/parameters", methods=["POST"])
 def parameters():
-    lower_bound = 0
-    upper_bound = 100
+    request_json = request.json
+    lower_bound = float(request_json["minGrade"])
+    upper_bound = float(request_json["maxGrade"])
     scale = upper_bound - lower_bound
 
-    sorted_dict = sorted(request.json["quantiles"].items(), key=lambda x: x[0])
+    sorted_dict = sorted(request_json["quantiles"].items(), key=lambda x: x[0])
 
     quantiles = np.array([float(item[0]) for item in sorted_dict])
     observed_values = np.array([float(item[1]) for item in sorted_dict]) - lower_bound
 
     is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
-
     if not is_sorted:
         abort(400, "Invalid request: The observed values are not sorted.")
+
+    is_range = all(lower_bound < observed_value < upper_bound for observed_value in observed_values)
+    if not is_range:
+        abort(400, "Observed values are out of range")
 
     logit_observations = logit(observed_values / scale)
 
@@ -86,7 +89,15 @@ def parameters():
     sst = np.sum((observed_values - np.mean(observed_values)) ** 2)
     r_square = 1 - sse / sst
 
-    print(expected_values.tolist())
+    cumulative = None
+
+    if "cumulative" in request_json and request_json["cumulative"] != "":
+        cumulative = norm.cdf(logit(float(request_json["cumulative"]) / scale), mean, std)
+
+    probability = None
+
+    if "probability" in request_json and request_json["probability"] != "":
+        probability = expit(norm.ppf(float(request_json["probability"]), mean, std)) * scale
 
     return jsonify(
         {
@@ -103,6 +114,8 @@ def parameters():
             "observed_y_values": (logit_norm_pdf(observed_values / scale, mean, std) / scale).tolist(),
             "expected_y_values": (logit_norm_pdf(expected_values / scale, mean, std) / scale).tolist(),
             "r_square": r_square,
+            "cumulative": cumulative,
+            "probability": probability,
         }
     )
 

@@ -31,8 +31,15 @@ const App = () => {
                 ...inputValues,
                 [event.target.id]: event.target.value,
             });
-        } else if (event.target.value !== "" && !isNaN(event.target.value)) {
-            // remember to check whether inputvalue is >= than min and <= than max
+        } else if (event.target.value == "") {
+            const quantiles = { ...inputValues["quantiles"] };
+            delete quantiles[event.target.id];
+
+            setInputValues({
+                ...inputValues,
+                quantiles: quantiles,
+            });
+        } else if (!isNaN(event.target.value)) {
             const quantiles = { ...inputValues["quantiles"], [event.target.id]: event.target.value };
 
             setInputValues({
@@ -43,7 +50,7 @@ const App = () => {
     };
 
     useEffect(() => {
-        if (Object.keys(inputValues["quantiles"]).length <= 1) {
+        if (!inputValues["minGrade"] || !inputValues["maxGrade"] || Object.keys(inputValues["quantiles"]).length <= 1) {
             return;
         }
 
@@ -131,6 +138,12 @@ const App = () => {
                                 </td>
                             </tr>
                             <tr>
+                                <td>P(x)</td>
+                                <td>
+                                    <input id="probability" type="text" value={inputValues.probabillity} onChange={handleChange} />
+                                </td>
+                            </tr>
+                            <tr>
                                 <td colSpan="3" style={{ border: "none", backgroundColor: "transparent" }}>
                                     &nbsp;
                                 </td>
@@ -151,7 +164,11 @@ const App = () => {
                             </tr>
                             <tr>
                                 <td>P(X ≤ x)</td>
-                                <td></td>
+                                <td>{summaryTableExpanded ? parameters?.cumulative : parameters?.cumulative?.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>x</td>
+                                <td>{summaryTableExpanded ? parameters?.probability : parameters?.probability?.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td colSpan="3" style={{ border: "none", backgroundColor: "transparent" }}>

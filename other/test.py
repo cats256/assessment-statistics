@@ -1,12 +1,47 @@
 import numpy as np
-from scipy.optimize import minimize
 from scipy.stats import norm
 from scipy.special import expit, logit
-from scipy.special import erf
-from math import sqrt
 
-print(norm.cdf(logit(0.87), 1.92, 0.21))
-print(1 / 2 * (1 + erf((logit(0.87) - 1.92) / sqrt(2 * 0.21**2))))
+# Example quantiles (you would replace this with your actual quantiles)
+quantiles = [0.25, 0.50, 0.75]
+
+# Observed values corresponding to the quantiles
+# (you would replace this with your actual data)
+# observed_values = [-1 + 5, 1 + 5]
+observed_values = [logit(79.90 / 100)]
+
+
+# Define the log-likelihood function
+def log_likelihood(params, observed_values):
+    mu, sigma = params
+    likelihoods = [norm.pdf(value, loc=mu, scale=sigma) for value in observed_values]
+    log_likelihood = np.log(np.prod(likelihoods))
+    return log_likelihood
+
+
+# Initial parameter values for the optimization
+initial_params = [0, 1]  # You can start with any values
+
+# Optimization to find the parameters that maximize the log-likelihood
+from scipy.optimize import minimize
+
+result = minimize(lambda params: -log_likelihood(params, observed_values), initial_params)
+
+# Extract the estimated parameters
+mu_est, sigma_est = result.x
+
+print("Estimated mean (mu):", mu_est)
+print("Estimated standard deviation (sigma):", sigma_est)
+
+# import numpy as np
+# from scipy.optimize import minimize
+# from scipy.stats import norm
+# from scipy.special import expit, logit
+# from scipy.special import erf
+# from math import sqrt
+
+# print(norm.cdf(logit(0.87), 1.92, 0.21))
+# print(1 / 2 * (1 + erf((logit(0.87) - 1.92) / sqrt(2 * 0.21**2))))
 # print("Something")
 # # Define the logit-normal loss function
 # def logit_norm_loss(parameters, quantiles, observed_values, scale):
