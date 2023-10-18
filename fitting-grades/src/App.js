@@ -21,7 +21,7 @@ const DeleteButton = () => {
 
 const App = () => {
     const [parameters, setParameters] = useState(false);
-    const [inputValues, setInputValues] = useState({ quantiles: {} });
+    const [inputValues, setInputValues] = useState({ minGrade: "0", maxGrade: "100", quantiles: { 0.25: "66", "0.50": "80", 0.75: 89 } });
     const [summaryTableExpanded, setSummaryTableExpanded] = useState(false);
     const [parametersTableExpanded, setParametersTableExpanded] = useState(false);
     const [rows, setRows] = useState([]);
@@ -99,7 +99,7 @@ const App = () => {
 
     return (
         <>
-            <h2>Fitting Grades</h2>
+            <h2>Assessment Statistics</h2>
             <div className="statistics">
                 <div>
                     <table>
@@ -115,33 +115,33 @@ const App = () => {
                             <tr>
                                 <td>Min Possible</td>
                                 <td>
-                                    <input id="minGrade" type="text" onChange={handleChange} />
+                                    <input id="minGrade" placeholder="0" type="text" onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
                                 <td>Max Possible</td>
                                 <td>
-                                    <input id="maxGrade" type="text" onChange={handleChange} />
+                                    <input id="maxGrade" placeholder="100" type="text" onChange={handleChange} />
                                 </td>
                             </tr>
                             <tr>
                                 <td>0.25</td>
                                 <td>
-                                    <input id="0.25" type="text" onChange={handleChange} />
+                                    <input id="0.25" type="text" placeholder="66" onChange={handleChange} />
                                 </td>
                                 <DeleteButton />
                             </tr>
                             <tr>
                                 <td>0.50</td>
                                 <td>
-                                    <input id="0.50" type="text" onChange={handleChange} />
+                                    <input id="0.50" type="text" placeholder="80" onChange={handleChange} />
                                 </td>
                                 <DeleteButton />
                             </tr>
                             <tr>
                                 <td>0.75</td>
                                 <td>
-                                    <input id="0.75" type="text" onChange={handleChange} />
+                                    <input id="0.75" type="text" placeholder="88" onChange={handleChange} />
                                 </td>
                                 <DeleteButton />
                             </tr>
@@ -271,6 +271,20 @@ const App = () => {
                             </tbody>
                         </table>
                     </div>
+                    <br></br>
+                    <br></br>
+                    <div>
+                        <b>References: </b>
+                    </div>
+                    <br></br>
+                    <div>Stanford Computer Science and GradeScope Researchers on the Logit-Normal for Grade Distribution:</div>
+                    <br></br>
+                    <div> https://files.eric.ed.gov/fulltext/ED599204.pdf (Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )</div>
+                    <br></br>
+                    <br></br>
+                    <div>SAS Distinguished Researcher on Fitting a Distribution from Quantiles with Weighted Least Square Estimates:</div>
+                    <br></br>
+                    <div>https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html (Rick Wicklin)</div>
                 </div>
             </div>
         </>
