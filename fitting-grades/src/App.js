@@ -68,7 +68,7 @@ const App = () => {
             return;
         }
 
-        fetch("/parameters", {
+        fetch("https://willb256.pythonanywhere.com/parameters", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
