@@ -12,6 +12,23 @@ CORS(app)
 # for a general informative view only, very high error at the tails
 
 
+def check_invalid_values(observed_values, scale):
+    is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
+    if not is_sorted:
+        print("Invalid request: The observed values are not sorted.")
+        abort(400)
+
+    is_range = all(0 < observed_value < scale for observed_value in observed_values)
+    if not is_range:
+        print("Invalid request: observed values are out of range: ")
+        print(observed_values)
+        abort(400)
+
+
+def logit_norm_pdf(x, mean, std):
+    return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
+
+
 def norm_loss(params, quantiles, logit_observations):
     mean, std = params
     expected_values = norm.ppf(quantiles, mean, std)
@@ -45,10 +62,6 @@ def norm_loss(params, quantiles, logit_observations):
     return np.sum(squared_differences * weight)
 
 
-def logit_norm_pdf(x, mean, std):
-    return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
-
-
 @app.route("/parameters", methods=["POST"])
 def parameters():
     request_json = request.json
@@ -61,16 +74,7 @@ def parameters():
     quantiles = np.array([float(item[0]) for item in sorted_dict])
     observed_values = np.array([float(item[1]) for item in sorted_dict]) - lower_bound
 
-    is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
-    if not is_sorted:
-        print("Invalid request: The observed values are not sorted.")
-        abort(400, "Invalid request: The observed values are not sorted.")
-
-    is_range = all(0 < observed_value < scale for observed_value in observed_values)
-    if not is_range:
-        print("Observed values are out of range")
-        print(observed_values)
-        abort(400, "Observed values are out of range")
+    check_invalid_values(observed_values, scale)
 
     logit_observations = logit(observed_values / scale)
 
@@ -104,25 +108,21 @@ def parameters():
     r_square = 1 - sse / sst
 
     cumulative = None
-
     if "cumulative" in request_json and request_json["cumulative"] != "":
         cumulative = norm.cdf(logit(float(request_json["cumulative"]) / scale), mean, std)
 
     probability = None
-
     if "probability" in request_json and request_json["probability"] != "":
         probability = expit(norm.ppf(float(request_json["probability"]), mean, std)) * scale
 
     return jsonify(
         {
-            "mean": np.sum(x_values * y_values) / (step_size - 1) * scale,  # can also do np.sum(x_values * y_values) / np.sum(y_values) * scale
+            # can also do np.sum(x_values * y_values) / np.sum(y_values) * scale
+            "mean": np.sum(x_values * y_values) / (step_size - 1) * scale,
             "mean_logit_norm": mean,
             "std_logit_norm": std,
             "observed_values": observed_values.tolist(),
             "expected_values": expected_values.tolist(),
-            "rmse": np.sqrt(sse / len(observed_values)),
-            "mse_norm": np.mean((logit_observations - expected_norm) ** 2),
-            "mae": np.mean(abs((observed_values - expected_values))),
             "x_values": x_values.tolist(),
             "y_values": y_values.tolist(),
             "observed_y_values": (logit_norm_pdf((observed_values - lower_bound) / scale, mean, std) / scale).tolist(),
@@ -130,6 +130,9 @@ def parameters():
             "r_square": r_square,
             "cumulative": cumulative,
             "probability": probability,
+            "rmse": np.sqrt(sse / len(observed_values)),
+            "mae": np.mean(np.abs(observed_values - expected_values)),
+            # "mse_norm": np.mean((logit_observations - expected_norm) ** 2),
         }
     )
 
@@ -137,4 +140,4 @@ def parameters():
 # implement views counter
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

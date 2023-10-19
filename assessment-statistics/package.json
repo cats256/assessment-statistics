@@ -1,5 +1,5 @@
 {
-    "name": "fitting-grades",
+    "name": "assessment-statistics",
     "version": "0.1.0",
     "private": true,
     "proxy": "https://willb256.pythonanywhere.com",

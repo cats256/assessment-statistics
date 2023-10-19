@@ -279,12 +279,20 @@ const App = () => {
                     <br></br>
                     <div>Stanford Computer Science and GradeScope Researchers on the Logit-Normal for Grade Distribution:</div>
                     <br></br>
-                    <div> https://files.eric.ed.gov/fulltext/ED599204.pdf (Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )</div>
+                    <div>
+                        <a href="https://files.eric.ed.gov/fulltext/ED599204.pdf">https://files.eric.ed.gov/fulltext/ED599204.pdf</a>
+                        &nbsp;(Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )
+                    </div>
                     <br></br>
                     <br></br>
-                    <div>SAS Distinguished Researcher on Fitting a Distribution from Quantiles with Weighted Least Square Estimates:</div>
+                    <div>SAS Distinguished Researcher on Fitting a Distribution from Quantiles using Weighted Least Square Estimation:</div>
                     <br></br>
-                    <div>https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html (Rick Wicklin)</div>
+                    <div>
+                        <a href="https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html">
+                            https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+                        </a>
+                        &nbsp;(Rick Wicklin)
+                    </div>
                 </div>
             </div>
         </>
