@@ -25,10 +25,6 @@ def check_invalid_values(observed_values, scale):
         abort(400)
 
 
-def logit_norm_pdf(x, mean, std):
-    return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
-
-
 def norm_loss(params, quantiles, logit_observations):
     mean, std = params
     expected_values = norm.ppf(quantiles, mean, std)
@@ -62,20 +58,7 @@ def norm_loss(params, quantiles, logit_observations):
     return np.sum(squared_differences * weight)
 
 
-@app.route("/parameters", methods=["POST"])
-def parameters():
-    request_json = request.json
-    lower_bound = float(request_json["minGrade"])
-    upper_bound = float(request_json["maxGrade"])
-    scale = upper_bound - lower_bound
-
-    sorted_dict = sorted(request_json["quantiles"].items(), key=lambda x: x[0])
-
-    quantiles = np.array([float(item[0]) for item in sorted_dict])
-    observed_values = np.array([float(item[1]) for item in sorted_dict]) - lower_bound
-
-    check_invalid_values(observed_values, scale)
-
+def optimize_logit_norm(observed_values, quantiles, scale):
     logit_observations = logit(observed_values / scale)
 
     mean_estimate = np.mean(logit_observations)
@@ -91,7 +74,29 @@ def parameters():
         bounds=[(None, None), (0, None)],
     )
 
-    mean, std = optimization_result.x
+    return optimization_result.x
+
+
+def logit_norm_pdf(x, mean, std):
+    return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
+
+
+@app.route("/parameters", methods=["POST"])
+def parameters():
+    request_json = request.json
+
+    lower_bound = float(request_json["minGrade"])
+    upper_bound = float(request_json["maxGrade"])
+    scale = upper_bound - lower_bound
+
+    sorted_dict = sorted(request_json["quantiles"].items(), key=lambda x: x[0])
+    quantiles = np.array([float(item[0]) for item in sorted_dict])
+    observed_values = np.array([float(item[1]) for item in sorted_dict]) - lower_bound
+
+    check_invalid_values(observed_values, scale)
+
+    mean, std = optimize_logit_norm(observed_values, quantiles, scale)
+
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
     expected_values = scale * expit(expected_norm) + lower_bound
     observed_values = observed_values + lower_bound
@@ -105,7 +110,6 @@ def parameters():
 
     sse = np.sum((observed_values - expected_values) ** 2)
     sst = np.sum((observed_values - np.mean(observed_values)) ** 2)
-    r_square = 1 - sse / sst
 
     cumulative = None
     if "cumulative" in request_json and request_json["cumulative"] != "":
@@ -127,17 +131,14 @@ def parameters():
             "y_values": y_values.tolist(),
             "observed_y_values": (logit_norm_pdf((observed_values - lower_bound) / scale, mean, std) / scale).tolist(),
             "expected_y_values": (logit_norm_pdf((expected_values - lower_bound) / scale, mean, std) / scale).tolist(),
-            "r_square": r_square,
-            "cumulative": cumulative,
-            "probability": probability,
             "rmse": np.sqrt(sse / len(observed_values)),
             "mae": np.mean(np.abs(observed_values - expected_values)),
-            # "mse_norm": np.mean((logit_observations - expected_norm) ** 2),
+            "r_square": 1 - sse / sst,
+            "cumulative": cumulative,
+            "probability": probability,
         }
     )
 
-
-# implement views counter
 
 if __name__ == "__main__":
     app.run(debug=False)
