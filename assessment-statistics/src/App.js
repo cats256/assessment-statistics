@@ -281,7 +281,7 @@ const App = () => {
                     <br></br>
                     <div>
                         <a href="https://files.eric.ed.gov/fulltext/ED599204.pdf">https://files.eric.ed.gov/fulltext/ED599204.pdf</a>
-                        &nbsp;(Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )
+                        &nbsp;(Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris; 2019)
                     </div>
                     <br></br>
                     <br></br>
@@ -291,7 +291,7 @@ const App = () => {
                         <a href="https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html">
                             https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
                         </a>
-                        &nbsp;(Rick Wicklin)
+                        &nbsp;(Rick Wicklin; 2018)
                     </div>
                 </div>
             </div>
