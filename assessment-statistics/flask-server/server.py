@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 import numpy as np
 from scipy.stats import norm
-from scipy.special import expit, logit
+from scipy.special import expit, logit, erfinv
 from scipy.optimize import minimize
 
 app = Flask(__name__)
@@ -26,36 +26,46 @@ def check_invalid_values(observed_values, scale):
 
 
 def norm_loss(params, quantiles, logit_observations):
-    mean, std = params
-    expected_values = norm.ppf(quantiles, mean, std)
+    try:
+        mean, std = params
+        expected_values = norm.ppf(quantiles, mean, std)
 
-    squared_differences = (logit_observations - expected_values) ** 2
-    # squared_differences = (expit(logit_observations) - expit(expected_values)) ** 2
+        squared_differences = (logit_observations - expected_values) ** 2
+        # squared_differences = (expit(logit_observations) - expit(expected_values)) ** 2
 
-    # not sure which loss function to use but both produces very similar results.
-    # i personally prefer calculating the SSE by transforming the data back into the
-    # logit-normal. main question is what's the type of error? multiplicative or
-    # additive? i don't have enough data to answer and check for heteroskedasticity
-    # but i believe it's the latter or it could be a mix of both. i don't know.
+        # not sure which loss function to use but both produces very similar results.
+        # i personally prefer calculating the SSE by transforming the data back into the
+        # logit-normal. main question is what's the type of error? multiplicative or
+        # additive? i don't have enough data to answer and check for heteroskedasticity
+        # but i believe it's the latter or it could be a mix of both. i don't know.
 
-    # edit: i went with the SSE using data in its normal (logistic transformed) form.
-    # thought the logistic transformed SSE is convex since i tested it and it seemed
-    # convex but i plotted the loss function again with a wider range for mean and
-    # standard deviation and lo and behold, it is not convex. not that there's anything
-    # inherently wrong with non-convex function. i just don't like them. lesson learned:
-    # don't forget to double check your assumptions XD
+        # edit: i went with the SSE using data in its normal (logistic transformed) form.
+        # thought the logistic transformed SSE is convex since i tested it and it seemed
+        # convex but i plotted the loss function again with a wider range for mean and
+        # standard deviation and lo and behold, it is not convex. not that there's anything
+        # inherently wrong with non-convex function. i just don't like them. lesson learned:
+        # don't forget to double check your assumptions XD
 
-    # tried to use this but this is out of my expertise and package won't work and i'm too lazy
-    # https://github.com/rsnirwan/bqme
-    # https://arxiv.org/abs/2008.06423
+        # tried to use this but this is out of my expertise and package won't work and i'm too lazy
+        # https://github.com/rsnirwan/bqme
+        # https://arxiv.org/abs/2008.06423
 
-    # don't really know what to name this but it's variance calculated without sample
-    # size purely to figure out the weight to give to each quantile
-    # https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
-    raw_variance = (quantiles * (1 - quantiles)) / (norm.pdf(expected_values, mean, std) ** 2)
-    weight = 1 / raw_variance
+        # don't really know what to name this but it's variance calculated without sample
+        # size purely to figure out the weight to give to each quantile
+        # https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+        # raw_variance = (quantiles * (1 - quantiles)) / (norm.pdf(expected_values, mean, std) ** 2)
+        # below is pretty much same thing as the line above just more explicit and optimized
+        # theoretically could take out std term and 2 * pi since they are constants and would not affect
+        # estimated parameters but since we're estimating numerically, taking them out
+        # increases error in estimated variance and decreases error in estimated mean
+        # this is probably due to taking out std term leads to a decrease in how much change in std affects
+        # change in sum squared error
+        raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2) * (std**2) * 2 * np.pi
 
-    return np.sum(squared_differences * weight)
+        return np.sum(squared_differences / raw_variance)
+    except:
+        print("Exception occured: ", mean, std)
+        return np.inf
 
 
 def optimize_logit_norm(observed_values, quantiles, scale):
@@ -71,7 +81,7 @@ def optimize_logit_norm(observed_values, quantiles, scale):
         initial_parameters,
         args=(quantiles, logit_observations),
         method="L-BFGS-B",
-        bounds=[(None, None), (0, None)],
+        bounds=[(None, None), (0.01, None)],
     )
 
     return optimization_result.x

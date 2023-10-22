@@ -1,7 +1,8 @@
 import numpy as np
 from scipy.stats import norm
-from scipy.special import expit, logit
+from scipy.special import expit, logit, erfinv
 from scipy.optimize import minimize
+
 import plotly.graph_objs as go
 
 
@@ -12,8 +13,8 @@ def norm_loss(params, quantiles, logit_observations):
     mean, std = params
     expected_values = norm.ppf(quantiles, mean, std)
 
-    # squared_differences = (logit_observations - expected_values) ** 2
-    squared_differences = (expit(logit_observations) - expit(expected_values)) ** 2
+    squared_differences = (logit_observations - expected_values) ** 2
+    # squared_differences = (expit(logit_observations) - expit(expected_values)) ** 2
 
     # not sure which loss function to use but both produces very similar results.
     # i personally prefer calculating the SSE by transforming the data back into the
@@ -27,8 +28,9 @@ def norm_loss(params, quantiles, logit_observations):
     # standard deviation and lo and behold, it is not convex. not that there's anything
     # inherently wrong with non-convex function. i just don't like them. lesson learned:
     # don't forget to double check your assumptions XD
+    raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2) * (std**2) * 2 * np.pi
 
-    return np.sum(squared_differences)
+    return np.sum(squared_differences / raw_variance)
 
 
 lower_bound = 0
@@ -66,12 +68,12 @@ print("Cumulative Probabillity for x = 78: ", norm.cdf(logit(81 / 84), mean, std
 
 n_points = 200
 # very restricted range but this shows how the function is convex more neatly
-# mean_range = np.linspace(mean - 0.4, mean + 0.4, n_points)
-# std_range = np.linspace(std - 0.6, std + 0.6, n_points)
+mean_range = np.linspace(mean - 0.4, mean + 0.4, n_points)
+std_range = np.linspace(std - 0.2, std + 1.0, n_points)
 
 # for the other loss function
-mean_range = np.linspace(mean - 100.4, mean + 100.4, n_points)
-std_range = np.linspace(std - 0.6, std + 100.6, n_points)
+# mean_range = np.linspace(mean - 100.4, mean + 100.4, n_points)
+# std_range = np.linspace(std - 0.6, std + 100.6, n_points)
 
 
 mean_grid, std_grid = np.meshgrid(mean_range, std_range)
@@ -100,8 +102,8 @@ fig.update_layout(
         xaxis_title="Mean",
         yaxis_title="Standard Deviation",
         zaxis_title="Loss",
-        xaxis=dict(range=[mean - 100.4, mean + 100.4]),
-        yaxis=dict(range=[std - 0.6, std + 100.6]),
+        xaxis=dict(range=[mean - 0.4, mean + 0.4]),
+        yaxis=dict(range=[std - 0.2, std + 1.0]),
     )
 )
 
