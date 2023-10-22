@@ -105,7 +105,9 @@ def parameters():
 
     check_invalid_values(observed_values, scale)
 
-    mean, std = optimize_logit_norm(observed_values, quantiles, scale)
+    # took me way too long to realize i could have done this analytically
+    # using linear regression lol
+    # mean, std = optimize_logit_norm(observed_values, quantiles, scale)
 
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
     expected_values = scale * expit(expected_norm) + lower_bound
