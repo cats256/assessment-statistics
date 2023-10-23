@@ -11,7 +11,7 @@ def max_likelihood(params, values):
 
     for q in quantiles:
         q_mean = norm.ppf(q, mean, std)
-        q_std = np.sqrt((q) * (1 - q) / ((101) * norm.pdf(norm.ppf(q, mean, std), mean, std) ** 2))
+        q_std = np.sqrt((q) * (1 - q) / ((101) * norm.pdf(norm.ppf(q)) ** 2))
         # print("q_mean = ", q_mean)
         # print("q_std = ", q_std)
         # print("quantile = ", values[int(q * 1000)])
@@ -37,7 +37,7 @@ def max_likelihood2(params, values):
 
     for q in quantiles:
         q_mean = norm.ppf(q, mean, std)
-        q_std = np.sqrt((q) * (1 - q) / ((101 + 2) * norm.pdf(norm.ppf(q, mean, std), mean, std) ** 2))
+        q_std = np.sqrt((q) * (1 - q) / ((101) * norm.pdf(norm.ppf(q, mean, std), mean, std) ** 2))
         # print("q_mean = ", q_mean)
         # print("q_std = ", q_std)
         # print("quantile = ", values[int(q * 1000)])
@@ -86,7 +86,7 @@ loss3 = np.array([0.0, 0.0])
 params4 = 0
 loss4 = np.array([0.0, 0.0])
 
-for i in range(10000):
+for i in range(10):
     data_chunk = np.random.normal(size=(1, 101), loc=1.54, scale=0.85)
 
     sorted_data = sorted(data_chunk[0])
@@ -95,12 +95,12 @@ for i in range(10000):
     upper_quartile = np.percentile(data_chunk, 75, axis=1)
 
     initial_guess = [2.5, 0.84]
-    param_bounds = [(-1.5, 3.0), (-1.5, 3.0)]
+    param_bounds = [(-1.5, 3.0), (0.01, 3.0)]
 
     # result = minimize(max_likelihood, initial_guess, args=(sorted_data), bounds=param_bounds, method="Powell")
-    # result = differential_evolution(max_likelihood, bounds=param_bounds, args=(sorted_data,))
-    # params += result.x
-    # loss1 += abs(correct_param - result.x) ** 2
+    result = differential_evolution(max_likelihood, bounds=param_bounds, args=(sorted_data,))
+    params += result.x
+    loss1 += abs(correct_param - result.x) ** 2
 
     # result = differential_evolution(max_likelihood2, bounds=param_bounds, args=(sorted_data,))
     # params2 += result.x
@@ -116,16 +116,16 @@ for i in range(10000):
     # # # print(upper_quartile)
     # # print(max_likelihood((2.5, 1.84), sorted(data_chunk[0])))
 
-    optimization_result = minimize(
-        norm_loss,
-        initial_guess,
-        args=(np.array([0.25, 0.5, 0.75]), np.array([sorted_data[25], sorted_data[50], sorted_data[75]])),
-        method="L-BFGS-B",
-        bounds=param_bounds,
-    )
+    # optimization_result = minimize(
+    #     norm_loss,
+    #     initial_guess,
+    #     args=(np.array([0.25, 0.5, 0.75]), np.array([sorted_data[25], sorted_data[50], sorted_data[75]])),
+    #     method="L-BFGS-B",
+    #     bounds=param_bounds,
+    # )
 
-    params3 += optimization_result.x
-    loss3 += abs(correct_param - optimization_result.x) ** 2
+    # params3 += optimization_result.x
+    # loss3 += abs(correct_param - optimization_result.x) ** 2
 
     # optimization_result = minimize(
     #     norm_loss2,
@@ -141,14 +141,14 @@ for i in range(10000):
     if i % 100 == 0:
         print(i)
 
-# print(params / 10)
-# print(loss1)
+print(params / 10)
+print(loss1)
 # print("")
 # print(params2 / 10)
 # print(loss2)
 # print("")
-print(params3 / 100)
-print(loss3)
+# print(params3 / 100)
+# print(loss3)
 # print("")
 # print(params4 / 10)
 # print(loss4)

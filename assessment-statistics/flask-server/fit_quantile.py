@@ -1,10 +1,35 @@
-import timeit
 import numpy as np
 from scipy.special import erfinv
 from sklearn.linear_model import LinearRegression
 
+from scipy.optimize import differential_evolution
+from scipy.stats import norm
+
+
+def max_likelihood(params, observed_quantiles, quantiles):
+    mean, std = params
+
+    log_likelihood = 0
+
+    i = 0
+    for q in quantiles:
+        q_mean = norm.ppf(q, mean, std)
+        q_std = np.sqrt((q) * (1 - q) / ((101) * norm.pdf(norm.ppf(q)) ** 2))
+
+        q_prob = norm.pdf(observed_quantiles[i], q_mean, q_std)
+        i += 1
+        if np.isnan(q_prob) or np.isinf(q_prob) or q_prob == 0:
+            return np.inf
+        log_q_prob = np.log(q_prob)
+        if np.isnan(log_q_prob) or np.isinf(log_q_prob):
+            return np.inf
+        log_likelihood += log_q_prob
+
+    return -1 * log_likelihood
+
+
 quantiles = np.array([0.01, 0.5, 0.99])
-num_loop = 1
+num_loop = 10
 
 estimation_total = np.zeros(2)
 estimation_loss = np.zeros(2)
@@ -12,58 +37,62 @@ estimation_loss = np.zeros(2)
 estimation_total_2 = np.zeros(2)
 estimation_loss_2 = np.zeros(2)
 
-model = LinearRegression()
-size = 10000
+estimation_total_3 = np.zeros(2)
+estimation_loss_3 = np.zeros(2)
+
+rng = np.random.default_rng()
 true_params = np.array([1.38, 1.06])
+size = 1000
+
+model = LinearRegression()
 
 for i in range(num_loop):
     # ordinary least square
-    data = np.sort(np.random.normal(size=size + 1, loc=true_params[0], scale=true_params[1]))
+    data = np.sort(rng.normal(loc=true_params[0], scale=true_params[1], size=size + 1))
 
-    observed_quantiles = np.percentile(data, quantiles * 100)
+    # observed_quantiles = np.quantile(data, quantiles, method="normal_unbiased")
+    observed_quantiles = np.quantile(data, quantiles)
     expected_quantiles = np.sqrt(2) * erfinv(2 * quantiles - 1)
 
     expected_quantiles = expected_quantiles.reshape(-1, 1)
     observed_quantiles = observed_quantiles.reshape(-1, 1)
 
-    def ols():
-        model.fit(expected_quantiles, observed_quantiles)
-        coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
+    # model.fit(expected_quantiles, observed_quantiles)
+    # coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
 
-        # estimation_total += coefficients
-        # estimation_loss += abs(true_params - coefficients) ** 2
+    # estimation_total += coefficients
+    # estimation_loss += abs(true_params - coefficients) ** 2
 
-    # weighted least square
+    # weighted least square, produces much better estimate the more extreme the quantiles are
+    # https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+    # raw_variance = (quantiles * (1 - quantiles)) / (norm.pdf(norm.ppf(quantiles)) ** 2)
+    # below is a more optimized version and takes out unnecessary terms
+    raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2)
+    weight = 1 / raw_variance
 
-    def wls():
-        raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2)
-        weight = 1 / raw_variance
+    model.fit(expected_quantiles, observed_quantiles, sample_weight=weight)
+    coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
 
-        model.fit(expected_quantiles, observed_quantiles, sample_weight=weight)
-        coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
+    estimation_total += coefficients
+    estimation_loss += abs(true_params - coefficients) ** 1
 
-        # estimation_total_2 += coefficients
-        # estimation_loss_2 += abs(true_params - coefficients) ** 2
+    result = differential_evolution(max_likelihood, bounds=[(0.18, 1.58), (0.2, 1.90)], args=(observed_quantiles, quantiles))
+    estimation_total_2 += result.x
+    estimation_loss_2 += abs(true_params - result.x) ** 2
 
-    ols_time = timeit.timeit(ols, number=10)
-    wls_time = timeit.timeit(wls, number=10)
+    if i % 1000 == 0 and i != 0:
+        print(i)
 
-    print(f"Ordinary Linear Regression Time: {ols_time} seconds")
-    print(f"Weighted Linear Regression Time: {wls_time} seconds")
+        print(estimation_total / i)
+        print(estimation_total_2 / i)
 
-    # if i % 1000 == 0 and i != 0:
-    #     print(i)
+        print(estimation_loss)
+        print(estimation_loss_2)
 
-    #     print(estimation_total / i)
-    #     print(estimation_total_2 / i)
+        print((abs((estimation_total_2[0] / i) - true_params[0])) / (abs((estimation_total[0] / i) - true_params[0])))
+        print((abs((estimation_total_2[1] / i) - true_params[1])) / (abs((estimation_total[1] / i) - true_params[1])))
 
-    #     print(estimation_loss)
-    #     print(estimation_loss_2)
-
-    #     print((abs((estimation_total_2[0] / i) - true_params[0])) / (abs((estimation_total[0] / i) - true_params[0])))
-    #     print((abs((estimation_total_2[1] / i) - true_params[1])) / (abs((estimation_total[1] / i) - true_params[1])))
-
-    #     print()
+        print()
 
 print("Estimation Total")
 print(estimation_total / num_loop)
