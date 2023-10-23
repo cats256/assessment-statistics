@@ -7,25 +7,29 @@ from scipy.stats import norm
 
 
 def max_likelihood(params, observed_quantiles, quantiles):
-    mean, std = params
+    try:
+        mean, std = params
+        log_likelihood = 0
 
-    log_likelihood = 0
+        for i, q in enumerate(quantiles):
+            q_mean = norm.ppf(q, mean, std)
+            q_std = np.sqrt(q * (1 - q) / (1001 * norm.pdf(norm.ppf(q)) ** 2))
 
-    i = 0
-    for q in quantiles:
-        q_mean = norm.ppf(q, mean, std)
-        q_std = np.sqrt((q) * (1 - q) / ((101) * norm.pdf(norm.ppf(q)) ** 2))
+            q_prob = norm.pdf(observed_quantiles[i], q_mean, q_std)
 
-        q_prob = norm.pdf(observed_quantiles[i], q_mean, q_std)
-        i += 1
-        if np.isnan(q_prob) or np.isinf(q_prob) or q_prob == 0:
-            return np.inf
-        log_q_prob = np.log(q_prob)
-        if np.isnan(log_q_prob) or np.isinf(log_q_prob):
-            return np.inf
-        log_likelihood += log_q_prob
+            if np.isnan(q_prob) or np.isinf(q_prob) or q_prob == 0:
+                return np.inf
 
-    return -1 * log_likelihood
+            log_q_prob = np.log(q_prob)
+
+            if np.isnan(log_q_prob) or np.isinf(log_q_prob):
+                return np.inf
+
+            log_likelihood += log_q_prob
+
+        return -log_likelihood
+    except:
+        return np.inf
 
 
 quantiles = np.array([0.01, 0.5, 0.99])
@@ -74,11 +78,12 @@ for i in range(num_loop):
     coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
 
     estimation_total += coefficients
-    estimation_loss += abs(true_params - coefficients) ** 1
+    estimation_loss += abs(true_params - coefficients) ** 2
 
-    result = differential_evolution(max_likelihood, bounds=[(0.18, 1.58), (0.2, 1.90)], args=(observed_quantiles, quantiles))
-    estimation_total_2 += result.x
-    estimation_loss_2 += abs(true_params - result.x) ** 2
+    result = differential_evolution(max_likelihood, bounds=[(-100, 100), (0.1, 100.0)], args=(np.quantile(data, quantiles), quantiles))
+    print(result.x)
+    estimation_total_2 += result.x[:2]
+    estimation_loss_2 += abs(true_params - result.x[:2]) ** 2
 
     if i % 1000 == 0 and i != 0:
         print(i)
