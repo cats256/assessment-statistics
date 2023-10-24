@@ -1,3 +1,5 @@
+https://cats256.github.io/assessment-statistics/build/
+
 The original Python and R files used for estimating the logit-normal parameters are in the original folder. However, they are not the most updated so please take a look at the flask-server in server.py for more updated and readable code.
  
 To do:
