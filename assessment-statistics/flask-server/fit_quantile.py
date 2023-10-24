@@ -2,38 +2,9 @@ import numpy as np
 from scipy.special import erfinv
 from sklearn.linear_model import LinearRegression
 
-from scipy.optimize import differential_evolution
-from scipy.stats import norm
 
-
-def max_likelihood(params, observed_quantiles, quantiles):
-    try:
-        mean, std = params
-        log_likelihood = 0
-
-        for i, q in enumerate(quantiles):
-            q_mean = norm.ppf(q, mean, std)
-            q_std = np.sqrt(q * (1 - q) / (1001 * norm.pdf(norm.ppf(q)) ** 2))
-
-            q_prob = norm.pdf(observed_quantiles[i], q_mean, q_std)
-
-            if np.isnan(q_prob) or np.isinf(q_prob) or q_prob == 0:
-                return np.inf
-
-            log_q_prob = np.log(q_prob)
-
-            if np.isnan(log_q_prob) or np.isinf(log_q_prob):
-                return np.inf
-
-            log_likelihood += log_q_prob
-
-        return -log_likelihood
-    except:
-        return np.inf
-
-
-quantiles = np.array([0.01, 0.5, 0.99])
-num_loop = 10
+quantiles = np.array([0.01, 0.50, 0.99])
+num_loop = 10000
 
 estimation_total = np.zeros(2)
 estimation_loss = np.zeros(2)
@@ -46,7 +17,7 @@ estimation_loss_3 = np.zeros(2)
 
 rng = np.random.default_rng()
 true_params = np.array([1.38, 1.06])
-size = 1000
+size = 100
 
 model = LinearRegression()
 
@@ -61,11 +32,11 @@ for i in range(num_loop):
     expected_quantiles = expected_quantiles.reshape(-1, 1)
     observed_quantiles = observed_quantiles.reshape(-1, 1)
 
-    # model.fit(expected_quantiles, observed_quantiles)
-    # coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
+    model.fit(expected_quantiles, observed_quantiles)
+    coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
 
-    # estimation_total += coefficients
-    # estimation_loss += abs(true_params - coefficients) ** 2
+    estimation_total += coefficients
+    estimation_loss += abs(true_params - coefficients) ** 2
 
     # weighted least square, produces much better estimate the more extreme the quantiles are
     # https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
@@ -77,13 +48,8 @@ for i in range(num_loop):
     model.fit(expected_quantiles, observed_quantiles, sample_weight=weight)
     coefficients = np.array([float(model.intercept_[0]), float(model.coef_[0][0])])
 
-    estimation_total += coefficients
-    estimation_loss += abs(true_params - coefficients) ** 2
-
-    result = differential_evolution(max_likelihood, bounds=[(-100, 100), (0.1, 100.0)], args=(np.quantile(data, quantiles), quantiles))
-    print(result.x)
-    estimation_total_2 += result.x[:2]
-    estimation_loss_2 += abs(true_params - result.x[:2]) ** 2
+    estimation_total_2 += coefficients
+    estimation_loss_2 += abs(true_params - coefficients) ** 2
 
     if i % 1000 == 0 and i != 0:
         print(i)

@@ -28,7 +28,7 @@ def norm_loss(params, quantiles, logit_observations):
     # standard deviation and lo and behold, it is not convex. not that there's anything
     # inherently wrong with non-convex function. i just don't like them. lesson learned:
     # don't forget to double check your assumptions XD
-    raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2) * (std**2) * 2 * np.pi
+    raw_variance = quantiles * (1 - quantiles) * np.exp(2 * erfinv(2 * quantiles - 1) ** 2) * (std**0) * 2 * np.pi
 
     return np.sum(squared_differences / raw_variance)
 
@@ -72,8 +72,8 @@ mean_range = np.linspace(mean - 0.4, mean + 0.4, n_points)
 std_range = np.linspace(std - 0.2, std + 1.0, n_points)
 
 # for the other loss function
-# mean_range = np.linspace(mean - 100.4, mean + 100.4, n_points)
-# std_range = np.linspace(std - 0.6, std + 100.6, n_points)
+mean_range = np.linspace(mean - 100.4, mean + 100.4, n_points)
+std_range = np.linspace(std - 0.6, std + 100.6, n_points)
 
 
 mean_grid, std_grid = np.meshgrid(mean_range, std_range)
@@ -102,8 +102,8 @@ fig.update_layout(
         xaxis_title="Mean",
         yaxis_title="Standard Deviation",
         zaxis_title="Loss",
-        xaxis=dict(range=[mean - 0.4, mean + 0.4]),
-        yaxis=dict(range=[std - 0.2, std + 1.0]),
+        xaxis=dict(range=[mean - 100.4, mean + 100.4]),
+        yaxis=dict(range=[std - 0.2, std + 100.6]),
     )
 )
 
