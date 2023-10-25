@@ -68,7 +68,7 @@ const App = () => {
             return;
         }
 
-        fetch("https://willb256.pythonanywhere.com/parameters", {
+        fetch("/parameters", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -141,7 +141,7 @@ const App = () => {
                             <tr>
                                 <td>0.75</td>
                                 <td>
-                                    <input id="0.75" type="text" placeholder="88" onChange={handleChange} />
+                                    <input id="0.75" type="text" placeholder="89" onChange={handleChange} />
                                 </td>
                                 <DeleteButton />
                             </tr>

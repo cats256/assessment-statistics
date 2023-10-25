@@ -107,7 +107,7 @@ def parameters():
 
     # took me way too long to realize i could have done this analytically
     # using linear regression lol
-    # mean, std = optimize_logit_norm(observed_values, quantiles, scale)
+    mean, std = optimize_logit_norm(observed_values, quantiles, scale)
 
     expected_norm = norm.ppf(quantiles, loc=mean, scale=std)
     expected_values = scale * expit(expected_norm) + lower_bound
@@ -153,4 +153,4 @@ def parameters():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
