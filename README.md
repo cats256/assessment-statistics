@@ -1,6 +1,8 @@
 ## https://cats256.github.io/assessment-statistics/build/
 
-The original Python and R files used for estimating the logit-normal parameters are in the original folder. However, they are not the most updated so please take a look at the flask-server in server.py for more updated and readable code.
+Have you ever wondered how to visualize a grade distribution given only their quantiles (lower quartile, median, upper quartile)? Or how well you actually perform on your exam relative to your classmates? Then this page is perfect for you.
+
+The original Python and R files used for estimating the logit-normal parameters are in the original folder. However, they are not the most updated so please take a look at the server.py and production.py in assessment-statistics/flask-server folder for more updated and readable code.
 
 Below is a general explanation for my method and my justifications for them
 
