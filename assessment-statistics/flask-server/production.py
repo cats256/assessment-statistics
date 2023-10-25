@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 app = Flask(__name__)
 CORS(app)
 
-# look at server.py then original files for more explanation
+# look at README.md then server.py then original files for more explanation. also, feel free to hit me up at nhatbui@tamu.edu for any question or suggestion
 
 
 def check_invalid_values(observed_values, scale):
