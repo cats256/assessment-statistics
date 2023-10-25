@@ -4,7 +4,7 @@ The original Python and R files used for estimating the logit-normal parameters 
 
 Below is a general explanation for my method and my justifications for them
 
-Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD
+Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD. Also I'm not that good at explaining so please feel free to hit me up at nhatbui@tamu.edu
 
 ## Questions and Answers:
 
@@ -29,15 +29,11 @@ Weighted least squares is done to combat combat heteroskedasticity since sample 
 
 Weighted least squares and MLE as I interpret it in this specific case should produce the same result (too lazy to show proof XD so you will have to take me at my face value). Although, least squares tend to produce slightly better result experimentally, perhaps, due to numerical instabillity and floating point error associated with doing log-likelihood optimization.
 
-### Why transform the grades into the normal distribution for weighted least squares? And why use the standard normal quantile of the cumulative probabilities in linear regression?
+### Why transform the grades into the normal distribution for weighted least squares instead of just doing it on the original data? And what's logic behind estimating mu and sigma using weighted linear regression on standard normal quantile of the cumulative probabilities?
 
+The loss function associated with doing least squares quantile matching estimation on grades, or just simply the logit-normal is not exactly convex, while least squares on the normal distribution is smoother and convex (I don't have a proof, I simply plotted the loss function so you will have to take me at my face value again XD). The sample quantile variance associated with the normal distribution is also more homogenous and normal (lol) than the logit-normal, which means the estimated parameter will also be more efficient doing least squares QME on data transformed to the normal as opposed to the logit-normal (again, i don't have proof but this should be the case if you run a simulation). As for the logic behind doing weighted linear regression, you may notice that the quantile function for the normal distribution is simply mu + sigma * sqrt(2) * erfinv(2p - 1) and the loss function is defined as sum from 1 to n (logit_transformed_observations - predicted_quantile_values)^2 = sum from 1 to n (logit_transformed_observations - mu + sigma * sqrt(2) * erfinv(2p - 1))^2. These functions are suspiciously similar to a linear model, yi = b0 + b1xi and its loss function, sum from 1 to n (yi - (b0 + b1xi))^2. And indeed they are! You can interpret sqrt(2) * erinv(2p - 1) as xi, or the independent variable, sigma as the slope, b1, mu as the intercept b0, and yi as the predicted logit_transformed_observations. And now all you have to do is do a weighted linear regression sqrt(2) * erfinv(2p - 1), which is also the quantile function for the standard normal, against the logit_transformed observations, to get mu and sigma, which are the intercept and slope of the linear model, respectively.
 
-
-want to do qme on normal dist since loss function
-    # is convex and sample quantile variance is more homogenous and normal (lol) in the normal than
-    # in the logit-normal
-
-To do:
+## sTo do:
 Refactor code
 Add collapsible FAQ part
 Add examples of how well this fits
