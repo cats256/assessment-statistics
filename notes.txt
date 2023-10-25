@@ -1,4 +1,4 @@
-IGNORE. LOOK AT README.MD
+IGNORE. LOOK AT README.MD. THIS IS JUST A DUMP FILE.
 
 Links:
 https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
@@ -27,3 +27,24 @@ Parameters estimation
 The result is way off?!?! Please message me
 Do loss function graphing contour map and loss landscape visualization
 https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
+
+    # doing weighted least squares instead of ordinary least squares to combat heteroskedasticity
+    # since sample quantile variance depends on the quantile examined. raw sample variance, as in sample variance calculated without sample size, since we don't know what the sample size is but it
+    # doesn't matter since we are doing weighted least squares and only need to know the relative
+    # variance or weight of each quantile. interestingly, the quantile function is mu + sigma *
+    # sqrt(2) * erfinv(2p - 1), which is of similar form to a linear model y = mx + b, where mu is
+    # b, the intercept, sigma is m, the slope, and x is erfinv(2p - 1), which is  the quantile
+    # function of a standard normal. this means we can just transform the probabilities into the
+    # quantile of a standard normal distribution then find mu and sigma through doing linear
+    # regression instead of expensive numerical approximation. weight is 1 / variance since b is
+    # proven to to be the best unbiased linear estimator when weighted sum of residuals is
+    # minimized, where weight is equal to the reciprocal of the variance of the measurement.
+
+    standard_norm_quantiles = norm.ppf(cumulative_probs)
+
+    # the logit normal distribution has been shown to be one of, if not, the best fit to exam distribution
+    # https://stanford.edu/~cpiech/bio/papers/gradesAreNotNormal.pdf
+    # https://files.eric.ed.gov/fulltext/ED599204.pdf (duplicate link in case)
+    # this matches with item response theory. want to do qme on normal dist since loss function
+    # is convex and sample quantile variance is more homogenous and normal (lol) in the normal than
+    # in the logit-normal
