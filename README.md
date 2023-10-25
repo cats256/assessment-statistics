@@ -6,9 +6,10 @@ The original Python and R files used for estimating the logit-normal parameters 
 
 Below is a Q&A section for my method and my justifications for it
 
-Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD. Also I'm not that good at explaining so please feel free to hit me up at nhatbui@tamu.edu
+Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD. If you have any suggestion or question please feel free to hit me up at nhatbui@tamu.edu
 
 ### References:
+
 Stanford Computer Science and GradeScope Researchers on the Logit-Normal for Grade Distribution:
 
 https://files.eric.ed.gov/fulltext/ED599204.pdf (Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )
