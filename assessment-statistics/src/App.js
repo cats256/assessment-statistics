@@ -39,8 +39,11 @@ const App = () => {
 
     const handleAddRow = () => {
         if (inputValues.quantile) {
-            setRows([...rows, [inputValues.quantile, inputValues.value]]);
-            setInputValues({ ...inputValues, quantile: "", value: "" });
+            // setRows([...rows, [inputValues.quantile, inputValues.value]]);
+            // setInputValues({ ...inputValues, quantile: "", value: "" });
+            const updatedInputValues = { ...inputValues };
+            updatedInputValues["quantiles"][inputValues.quantile] = inputValues.value;
+            setInputValues(updatedInputValues);
         }
     };
 
@@ -58,7 +61,7 @@ const App = () => {
             });
         } else if (event.target.value === "") {
             const quantiles = { ...inputValues["quantiles"] };
-            delete quantiles[event.target.id];
+            quantiles[event.target.id] = "";
 
             setInputValues({
                 ...inputValues,
@@ -125,7 +128,11 @@ const App = () => {
                             </tr>
                             <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
                             <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
-                            <tr>
+                            {Object.entries(inputValues.quantiles).map(([quantile]) => (
+                                <QuantileInput key={quantile} label={quantile} id={quantile} onChange={handleChange} onDelete={handleDeleteRow} />
+                            ))}
+
+                            {/* <tr>
                                 <td>0.25</td>
                                 <td>
                                     <input id="0.25" type="text" placeholder="66" onChange={handleChange} />
@@ -145,8 +152,8 @@ const App = () => {
                                     <input id="0.75" type="text" placeholder="89" onChange={handleChange} />
                                 </td>
                                 <DeleteButton />
-                            </tr>
-                            {rows.map((row, index) => (
+                            </tr> */}
+                            {/* {rows.map((row, index) => (
                                 <tr key={index}>
                                     <td>{row[0]}</td>
                                     <td>
@@ -158,7 +165,7 @@ const App = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ))}
+                            ))} */}
                             <tr>
                                 <td>x</td>
                                 <td>
