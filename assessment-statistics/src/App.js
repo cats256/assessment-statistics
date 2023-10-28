@@ -1,6 +1,8 @@
 import "./index.css";
 import React, { useState, useEffect } from "react";
 import QuantileInput from "./QuantileInput";
+import SummaryStatistics from "./SummaryStatistics";
+import ModelPerformance from "./ModelPerformance";
 import Plot from "./Plot";
 import LogitNormalParameters from "./LogitNormalParameters";
 import References from "./References";
@@ -144,41 +146,6 @@ const App = () => {
                                     onDelete={() => handleDeleteQuantile(quantile)}
                                 />
                             ))}
-
-                            {/* <tr>
-                                <td>0.25</td>
-                                <td>
-                                    <input id="0.25" type="text" placeholder="66" onChange={handleChange} />
-                                </td>
-                                <DeleteButton />
-                            </tr>
-                            <tr>
-                                <td>0.50</td>
-                                <td>
-                                    <input id="0.50" type="text" placeholder="80" onChange={handleChange} />
-                                </td>
-                                <DeleteButton />
-                            </tr>
-                            <tr>
-                                <td>0.75</td>
-                                <td>
-                                    <input id="0.75" type="text" placeholder="89" onChange={handleChange} />
-                                </td>
-                                <DeleteButton />
-                            </tr> */}
-                            {/* {rows.map((row, index) => (
-                                <tr key={index}>
-                                    <td>{row[0]}</td>
-                                    <td>
-                                        <input id={row[0]} type="text" onChange={handleChange} />
-                                    </td>
-                                    <td>
-                                        <button type="button" onClick={() => handleDeleteRowIndex(index)}>
-                                            delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))} */}
                             <tr>
                                 <td>x</td>
                                 <td>
@@ -204,60 +171,16 @@ const App = () => {
                                     </button>
                                 </td>
                             </tr>
-                            <tr>
-                                <td colSpan="3" style={{ border: "none", backgroundColor: "transparent" }}>
-                                    &nbsp;
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan="2">
-                                    <b>Summary Statistics</b>
-                                </td>
-                                <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
-                                    <button type="button" onClick={toggleDisplaySummaryTable}>
-                                        {summaryTableExpanded ? "collapse" : "expand"}
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Mean</td>
-                                <td>{summaryTableExpanded ? parameters?.mean : parameters?.mean?.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>P(X ≤ x)</td>
-                                <td>{summaryTableExpanded ? parameters?.cumulative : parameters?.cumulative?.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>x</td>
-                                <td>{summaryTableExpanded ? parameters?.probability : parameters?.probability?.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td colSpan="3" style={{ border: "none", backgroundColor: "transparent" }}>
-                                    &nbsp;
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan="2">
-                                    <b>Model Performance</b>
-                                </td>
-                                <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
-                                    <button type="button" onClick={toggleDisplaySummaryTable}>
-                                        {summaryTableExpanded ? "collapse" : "expand"}
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>RMSE</td>
-                                <td>{summaryTableExpanded ? parameters?.rmse : parameters?.rmse?.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>MAE</td>
-                                <td>{summaryTableExpanded ? parameters?.mae : parameters?.mae?.toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>R^2</td>
-                                <td>{summaryTableExpanded ? parameters?.r_square : parameters?.r_square?.toFixed(2)}</td>
-                            </tr>
+                            <SummaryStatistics
+                                parameters={parameters}
+                                summaryTableExpanded={summaryTableExpanded}
+                                toggleDisplaySummaryTable={toggleDisplaySummaryTable}
+                            />
+                            <ModelPerformance
+                                parameters={parameters}
+                                summaryTableExpanded={summaryTableExpanded}
+                                toggleDisplaySummaryTable={toggleDisplaySummaryTable}
+                            />
                         </tbody>
                     </table>
                 </div>
