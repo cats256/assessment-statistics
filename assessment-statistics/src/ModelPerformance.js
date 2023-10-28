@@ -1,7 +1,7 @@
 import React from "react";
 import ParameterRow from "./ParameterRow";
 
-function ModelPerformance({ parameters, isExpanded, toggleTableExpand }) {
+const ModelPerformance = ({ parameters, isExpanded, toggleTableExpand }) => {
     return (
         <>
             <tr>
@@ -24,6 +24,6 @@ function ModelPerformance({ parameters, isExpanded, toggleTableExpand }) {
             <ParameterRow name="R^2" value={parameters?.r_square} isExpanded={isExpanded} />
         </>
     );
-}
+};
 
 export default ModelPerformance;

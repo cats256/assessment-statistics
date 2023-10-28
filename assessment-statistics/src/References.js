@@ -3,6 +3,20 @@ import React from "react";
 const References = () => {
     return (
         <div>
+            <br></br>
+            <br></br>
+            <div>
+                <b>Source Code: </b>
+            </div>
+            <br></br>
+            <div>
+                <a href="https://github.com/cats256/assessment-statistics/#readme" target="_blank" rel="noopener noreferrer">
+                    https://github.com/cats256/assessment-statistics
+                </a>
+                &nbsp;(explanations on methodology is located in README.md)
+            </div>
+            <br></br>
+            <br></br>
             <div>
                 <b>References: </b>
             </div>
@@ -17,7 +31,9 @@ const References = () => {
             </div>
             <br />
             <br />
-            <div>SAS Distinguished Researcher on Fitting a Distribution from Quantiles using Weighted Least Square Estimation:</div>
+            <div>
+                SAS Distinguished Researcher on Fitting a Distribution from Quantiles using Weighted Least Square Estimation:
+            </div>
             <br />
             <div>
                 <a

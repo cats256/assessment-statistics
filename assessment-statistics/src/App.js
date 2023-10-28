@@ -24,7 +24,11 @@ const App = () => {
     const handleAddQuantile = () => {
         if (inputValues.quantile) {
             const updatedInputValues = { ...inputValues };
+
             updatedInputValues["quantiles"][inputValues.quantile] = inputValues.value;
+            updatedInputValues["quantile"] = "";
+            updatedInputValues["value"] = "";
+
             setInputValues(updatedInputValues);
         }
     };
@@ -37,27 +41,16 @@ const App = () => {
     };
 
     const handleChange = (event) => {
-        if (isNaN(event.target.id)) {
-            setInputValues({
-                ...inputValues,
-                [event.target.id]: event.target.value,
-            });
-        } else if (event.target.value === "") {
-            const quantiles = { ...inputValues["quantiles"] };
-            quantiles[event.target.id] = "";
+        const { id, value } = event.target;
+        let updatedInputValues = { ...inputValues };
 
-            setInputValues({
-                ...inputValues,
-                quantiles: quantiles,
-            });
-        } else if (!isNaN(event.target.value)) {
-            const quantiles = { ...inputValues["quantiles"], [event.target.id]: event.target.value };
-
-            setInputValues({
-                ...inputValues,
-                quantiles: quantiles,
-            });
+        if (isNaN(id)) {
+            updatedInputValues[id] = value;
+        } else {
+            updatedInputValues.quantiles = { ...updatedInputValues.quantiles, [id]: value || "" };
         }
+
+        setInputValues(updatedInputValues);
     };
 
     useEffect(() => {
@@ -103,11 +96,12 @@ const App = () => {
                             </tr>
                             <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
                             <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
-                            {Object.entries(inputValues.quantiles).map(([quantile]) => (
+                            {Object.entries(inputValues.quantiles).map(([quantile, value]) => (
                                 <QuantileInput
                                     key={quantile}
                                     label={quantile}
                                     id={quantile}
+                                    value={value}
                                     onChange={handleChange}
                                     onDelete={() => handleDeleteQuantile(quantile)}
                                 />
@@ -157,8 +151,6 @@ const App = () => {
                         isExpanded={parametersTableExpanded}
                         toggleTableExpand={setParametersTableExpanded}
                     />
-                    <br></br>
-                    <br></br>
                     <References />
                 </div>
             </div>

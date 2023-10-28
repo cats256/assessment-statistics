@@ -5,9 +5,9 @@ const QuantileInput = ({ label, id, value, onChange, onDelete }) => {
         const placeholders = {
             "Min Possible": "0",
             "Max Possible": "100",
-            0.25: "66",
-            "0.50": "80",
-            0.75: "89",
+            // 0.25: "66",
+            // "0.50": "80",
+            // 0.75: "89",
         };
         return placeholders[label] || placeholders[id] || "";
     };
