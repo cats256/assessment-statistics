@@ -53,6 +53,13 @@ const App = () => {
         setRows(updatedRows);
     };
 
+    const handleDeleteQuantile = (quantile) => {
+        const updatedInputValues = { ...inputValues };
+        delete updatedInputValues["quantiles"][quantile];
+        setInputValues(updatedInputValues);
+        console.log(inputValues);
+    };
+
     const handleChange = (event) => {
         if (isNaN(event.target.id)) {
             setInputValues({
@@ -129,7 +136,13 @@ const App = () => {
                             <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
                             <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
                             {Object.entries(inputValues.quantiles).map(([quantile]) => (
-                                <QuantileInput key={quantile} label={quantile} id={quantile} onChange={handleChange} onDelete={handleDeleteRow} />
+                                <QuantileInput
+                                    key={quantile}
+                                    label={quantile}
+                                    id={quantile}
+                                    onChange={handleChange}
+                                    onDelete={() => handleDeleteQuantile(quantile)}
+                                />
                             ))}
 
                             {/* <tr>
