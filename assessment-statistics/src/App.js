@@ -7,23 +7,6 @@ import Plot from "./Plot";
 import LogitNormalParameters from "./LogitNormalParameters";
 import References from "./References";
 
-const handleDeleteRow = (event) => {
-    const row = event.target.closest("tr");
-    if (row) {
-        row.remove();
-    }
-};
-
-const DeleteButton = () => {
-    return (
-        <td>
-            <button type="button" onClick={handleDeleteRow}>
-                delete
-            </button>
-        </td>
-    );
-};
-
 const App = () => {
     const [parameters, setParameters] = useState(false);
     const [inputValues, setInputValues] = useState({
@@ -37,29 +20,20 @@ const App = () => {
     });
     const [summaryTableExpanded, setSummaryTableExpanded] = useState(false);
     const [parametersTableExpanded, setParametersTableExpanded] = useState(false);
-    const [rows, setRows] = useState([]);
 
     const handleAddQuantile = () => {
         if (inputValues.quantile) {
-            // setRows([...rows, [inputValues.quantile, inputValues.value]]);
-            // setInputValues({ ...inputValues, quantile: "", value: "" });
             const updatedInputValues = { ...inputValues };
             updatedInputValues["quantiles"][inputValues.quantile] = inputValues.value;
             setInputValues(updatedInputValues);
         }
     };
 
-    const handleDeleteRowIndex = (index) => {
-        const updatedRows = [...rows];
-        updatedRows.splice(index, 1);
-        setRows(updatedRows);
-    };
-
     const handleDeleteQuantile = (quantile) => {
         const updatedInputValues = { ...inputValues };
+
         delete updatedInputValues["quantiles"][quantile];
         setInputValues(updatedInputValues);
-        console.log(inputValues);
     };
 
     const handleChange = (event) => {
@@ -111,10 +85,6 @@ const App = () => {
                 console.error("Error:", error);
             });
     }, [inputValues]);
-
-    const toggleDisplaySummaryTable = () => {
-        setSummaryTableExpanded(!summaryTableExpanded);
-    };
 
     return (
         <>
