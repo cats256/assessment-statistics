@@ -9,7 +9,7 @@ from sklearn.linear_model import LinearRegression
 app = Flask(__name__)
 CORS(app)
 
-# look at README.md then server.py then original files for more explanation. also, feel free to hit me up at nhatbui@tamu.edu for any question or suggestion
+# look at README.md then server.py then original files for more explanation. also, feel free to hit me up at nhatbui@tamu.edu for any question or suggestion. heavily refactored and concise method (hence small file size but this took a lot more work than you would expect), which involves transforming the data twice, through the response variable and the explanatory variable, then fit a weighted lin reg. i have tested various distributions and optimization methods and this method is as good as it gets.
 
 
 def check_invalid_values(observed_values, scale):
@@ -40,27 +40,7 @@ def parameters():
 
     check_invalid_values(observed_values, scale)
 
-    # doing weighted least squares instead of ordinary least squares to combat heteroskedasticity
-    # since sample quantile variance depends on the quantile examined. raw sample variance, as in sample variance calculated without sample size, since we don't know what the sample size is but it
-    # doesn't matter since we are doing weighted least squares and only need to know the relative
-    # variance or weight of each quantile. interestingly, the quantile function is mu + sigma *
-    # sqrt(2) * erfinv(2p - 1), which is of similar form to a linear model y = mx + b, where mu is
-    # b, the intercept, sigma is m, the slope, and x is erfinv(2p - 1), which is  the quantile
-    # function of a standard normal. this means we can just transform the probabilities into the
-    # quantile of a standard normal distribution then find mu and sigma through doing linear
-    # regression instead of expensive numerical approximation. weight is 1 / variance since b is
-    # proven to to be the best unbiased linear estimator when weighted sum of residuals is
-    # minimized, where weight is equal to the reciprocal of the variance of the measurement.
-
     standard_norm_quantiles = norm.ppf(cumulative_probs)
-
-    # the logit normal distribution has been shown to be one of, if not, the best fit to exam distribution
-    # https://stanford.edu/~cpiech/bio/papers/gradesAreNotNormal.pdf
-    # https://files.eric.ed.gov/fulltext/ED599204.pdf (duplicate link in case)
-    # this matches with item response theory. want to do qme on normal dist since loss function
-    # is convex and sample quantile variance is more homogenous and normal (lol) in the normal than
-    # in the logit-normal
-
     logit_transformed_observations = logit(observed_values / scale)
 
     standard_norm_quantiles = standard_norm_quantiles.reshape(-1, 1)
@@ -114,99 +94,5 @@ def parameters():
     )
 
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
-
-# from flask import Flask, request, abort, jsonify
-# from flask_cors import CORS
-
-# import numpy as np
-# from scipy.stats import norm
-# from scipy.special import expit, logit
-# from sklearn.linear_model import LinearRegression
-
-# app = Flask(__name__)
-# CORS(app)
-
-# def check_invalid_values(observed_values, scale):
-#     is_sorted = all(observed_values[i] <= observed_values[i + 1] for i in range(len(observed_values) - 1))
-#     if not is_sorted:
-#         abort(400)
-
-#     is_range = all(0 < observed_value < scale for observed_value in observed_values)
-#     if not is_range:
-#         abort(400)
-
-# def logitnorm_pdf(x, mean, std):
-#     return 1 / (std * np.sqrt(2 * np.pi)) * 1 / (x * (1 - x)) * np.e ** (-((logit(x) - mean) ** 2) / (2 * std**2))
-
-# @app.route("/parameters", methods=["POST"])
-# def parameters():
-#     request_json = request.json
-
-#     min_grade = float(request_json["minGrade"])
-#     max_grade = float(request_json["maxGrade"])
-#     grade_scale = max_grade - min_grade
-
-#     sorted_quantiles = sorted(request_json["quantiles"].items(), key=lambda x: x[0])
-#     cumulative_probs = np.array([float(item[0]) for item in sorted_quantiles])
-#     observed_values = np.array([float(item[1]) for item in sorted_quantiles]) - min_grade
-
-#     check_invalid_values(observed_values, grade_scale)
-
-#     std_norm_quantiles = norm.ppf(cumulative_probs)
-
-#     logit_observed_values = logit(observed_values / grade_scale)
-
-#     std_norm_quantiles = std_norm_quantiles.reshape(-1, 1)
-#     logit_observed_values = logit_observed_values.reshape(-1, 1)
-
-#     raw_variances = cumulative_probs * (1 - cumulative_probs) / norm.pdf(norm.ppf(cumulative_probs)) ** 2
-#     sample_weights = 1 / raw_variances
-
-#     model = LinearRegression().fit(std_norm_quantiles, logit_observed_values, sample_weights)
-#     logit_mean, logit_std = float(model.intercept_[0]), float(model.coef_[0][0])
-
-#     expected_std_norm_quantiles = norm.ppf(cumulative_probs, loc=logit_mean, scale=logit_std)
-#     expected_values = grade_scale * expit(expected_std_norm_quantiles) + min_grade
-#     observed_values = observed_values + min_grade
-
-#     step_size = 1000
-#     x_values_unscaled = np.linspace(0, 1, step_size)[1:-1]
-#     y_values_unscaled = logitnorm_pdf(x_values_unscaled, logit_mean, logit_std)
-
-#     x_values = x_values_unscaled * grade_scale + min_grade
-#     y_values = y_values_unscaled / grade_scale
-
-#     sse = np.sum((observed_values - expected_values) ** 2)
-#     sst = np.sum((observed_values - np.mean(observed_values)) ** 2)
-
-#     cumulative_prob = None
-#     if "cumulative" in request_json and request_json["cumulative"] != "":
-#         cumulative_prob = norm.cdf(logit(float(request_json["cumulative"]) / grade_scale, logit_mean, logit_std)
-
-#     probability = None
-#     if "probability" in request_json and request_json["probability"] != "":
-#         probability = expit(norm.ppf(float(request_json["probability"]), logit_mean, logit_std)) * grade_scale
-
-#     return jsonify(
-#         {
-#             "mean": np.sum(x_values * y_values) / (step_size - 1) * grade_scale,
-#             "mean_logit_norm": logit_mean,
-#             "std_logit_norm": logit_std,
-#             "observed_values": observed_values.tolist(),
-#             "expected_values": expected_values.tolist(),
-#             "x_values": x_values.tolist(),
-#             "y_values": y_values.tolist(),
-#             "observed_y_values": (logitnorm_pdf((observed_values - min_grade) / grade_scale, logit_mean, logit_std) / grade_scale).tolist(),
-#             "expected_y_values": (logitnorm_pdf((expected_values - min_grade) / grade_scale, logit_mean, logit_std) / grade_scale).tolist(),
-#             "rmse": np.sqrt(sse / len(observed_values)),
-#             "mae": np.mean(np.abs(observed_values - expected_values)),
-#             "r_square": 1 - sse / sst,
-#             "cumulative": cumulative_prob,
-#             "probability": probability,
-#         }
-#     )
-
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=False)

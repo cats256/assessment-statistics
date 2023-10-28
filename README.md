@@ -6,7 +6,7 @@ The original Python and R files used for estimating the logit-normal parameters 
 
 Below is a Q&A section for my method and my justifications for it
 
-Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD. If you have any suggestion or question please feel free to hit me up at nhatbui@tamu.edu
+Note: Just a warning that since I don't have that much of a background in statistics, my explanations may be oversimplified / inaccurate so please excuse any of my mistake and let me know XD. If you have any suggestion or question please feel free to hit me up at nhatbui@tamu.edu. Also, found this paper but I don't understand how to implement it https://arxiv.org/pdf/2008.06423.pdf. PS: I tried. For some reason the order statistics MLE did not produce any superior result to weighted least squares, which is rather suprising
 
 ### References:
 
