@@ -1,13 +1,8 @@
 import React from "react";
+import ExpandableHeader from "./ExpandableHeader";
+import ParameterRow from "./ParameterRow";
 
-function SummaryStatistics({ parameters, summaryTableExpanded, toggleDisplaySummaryTable }) {
-    const renderParameter = (name, value) => (
-        <tr>
-            <td>{name}</td>
-            <td>{summaryTableExpanded ? value : value?.toFixed(2)}</td>
-        </tr>
-    );
-
+function SummaryStatistics({ parameters, isExpanded, toggleTableExpand }) {
     return (
         <>
             <tr>
@@ -15,19 +10,10 @@ function SummaryStatistics({ parameters, summaryTableExpanded, toggleDisplaySumm
                     &nbsp;
                 </td>
             </tr>
-            <tr>
-                <td colSpan="2">
-                    <b>Summary Statistics</b>
-                </td>
-                <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
-                    <button type="button" onClick={toggleDisplaySummaryTable}>
-                        {summaryTableExpanded ? "collapse" : "expand"}
-                    </button>
-                </td>
-            </tr>
-            {renderParameter("Mean", parameters?.mean)}
-            {renderParameter("P(X ≤ x)", parameters?.cumulative)}
-            {renderParameter("x", parameters?.probability)}
+            <ExpandableHeader title="Summary Statistics" isExpanded={isExpanded} toggleTableExpand={toggleTableExpand} />
+            <ParameterRow name="Mean" value={parameters?.mean} isExpanded={isExpanded} />
+            <ParameterRow name="P(X ≤ x)" value={parameters?.cumulative} isExpanded={isExpanded} />
+            <ParameterRow name="x" value={parameters?.probability} isExpanded={isExpanded} />
         </>
     );
 }

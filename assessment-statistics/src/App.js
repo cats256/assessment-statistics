@@ -39,7 +39,7 @@ const App = () => {
     const [parametersTableExpanded, setParametersTableExpanded] = useState(false);
     const [rows, setRows] = useState([]);
 
-    const handleAddRow = () => {
+    const handleAddQuantile = () => {
         if (inputValues.quantile) {
             // setRows([...rows, [inputValues.quantile, inputValues.value]]);
             // setInputValues({ ...inputValues, quantile: "", value: "" });
@@ -116,10 +116,6 @@ const App = () => {
         setSummaryTableExpanded(!summaryTableExpanded);
     };
 
-    const toggleDisplayParametersTable = () => {
-        setParametersTableExpanded(!parametersTableExpanded);
-    };
-
     return (
         <>
             <h2>Assessment Statistics</h2>
@@ -146,18 +142,18 @@ const App = () => {
                                     onDelete={() => handleDeleteQuantile(quantile)}
                                 />
                             ))}
-                            <tr>
-                                <td>x</td>
-                                <td>
-                                    <input id="cumulative" type="text" value={inputValues.cumulative} onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>P(x)</td>
-                                <td>
-                                    <input id="probability" type="text" value={inputValues.probabillity} onChange={handleChange} />
-                                </td>
-                            </tr>
+                            <QuantileInput
+                                label="x"
+                                id="cumulative"
+                                value={inputValues.cumulative}
+                                onChange={handleChange}
+                            />
+                            <QuantileInput
+                                label="P(x)"
+                                id="probability"
+                                value={inputValues.probability}
+                                onChange={handleChange}
+                            />
                             <tr>
                                 <td>
                                     <input id="quantile" type="text" value={inputValues.quantile} onChange={handleChange} />
@@ -166,27 +162,31 @@ const App = () => {
                                     <input id="value" type="text" value={inputValues.value} onChange={handleChange} />
                                 </td>
                                 <td>
-                                    <button type="button" onClick={handleAddRow}>
+                                    <button type="button" onClick={handleAddQuantile}>
                                         add
                                     </button>
                                 </td>
                             </tr>
                             <SummaryStatistics
                                 parameters={parameters}
-                                summaryTableExpanded={summaryTableExpanded}
-                                toggleDisplaySummaryTable={toggleDisplaySummaryTable}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
                             />
                             <ModelPerformance
                                 parameters={parameters}
-                                summaryTableExpanded={summaryTableExpanded}
-                                toggleDisplaySummaryTable={toggleDisplaySummaryTable}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
                             />
                         </tbody>
                     </table>
                 </div>
                 <div>
                     <Plot parameters={parameters} />
-                    <LogitNormalParameters parameters={parameters} isExpanded={parametersTableExpanded} onToggle={setParametersTableExpanded} />
+                    <LogitNormalParameters
+                        parameters={parameters}
+                        isExpanded={parametersTableExpanded}
+                        toggleTableExpand={setParametersTableExpanded}
+                    />
                     <br></br>
                     <br></br>
                     <References />

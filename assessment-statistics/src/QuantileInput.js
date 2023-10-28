@@ -1,6 +1,6 @@
 import React from "react";
 
-const QuantileInput = ({ label, id, onChange, onDelete }) => {
+const QuantileInput = ({ label, id, value, onChange, onDelete }) => {
     const getPlaceholder = () => {
         const placeholders = {
             "Min Possible": "0",
@@ -16,7 +16,7 @@ const QuantileInput = ({ label, id, onChange, onDelete }) => {
         <tr>
             <td>{label}</td>
             <td>
-                <input id={id} type="text" onChange={onChange} placeholder={getPlaceholder()} />
+                <input id={id} type="text" value={value} onChange={onChange} placeholder={getPlaceholder()} />
             </td>
             {onDelete && (
                 <td>

@@ -1,13 +1,7 @@
 import React from "react";
+import ParameterRow from "./ParameterRow";
 
-function ModelPerformance({ parameters, summaryTableExpanded, toggleDisplaySummaryTable }) {
-    const renderParameter = (name, value) => (
-        <tr>
-            <td>{name}</td>
-            <td>{summaryTableExpanded ? value : value?.toFixed(2)}</td>
-        </tr>
-    );
-
+function ModelPerformance({ parameters, isExpanded, toggleTableExpand }) {
     return (
         <>
             <tr>
@@ -20,14 +14,14 @@ function ModelPerformance({ parameters, summaryTableExpanded, toggleDisplaySumma
                     <b>Model Performance</b>
                 </td>
                 <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
-                    <button type="button" onClick={toggleDisplaySummaryTable}>
-                        {summaryTableExpanded ? "collapse" : "expand"}
+                    <button type="button" onClick={() => toggleTableExpand(!isExpanded)}>
+                        {isExpanded ? "collapse" : "expand"}
                     </button>
                 </td>
             </tr>
-            {renderParameter("RMSE", parameters?.rmse)}
-            {renderParameter("MAE", parameters?.mae)}
-            {renderParameter("R^2", parameters?.r_square)}
+            <ParameterRow name="RMSE" value={parameters?.rmse} isExpanded={isExpanded} />
+            <ParameterRow name="MAE" value={parameters?.mae} isExpanded={isExpanded} />
+            <ParameterRow name="R^2" value={parameters?.r_square} isExpanded={isExpanded} />
         </>
     );
 }
