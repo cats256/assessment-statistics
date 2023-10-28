@@ -1,6 +1,8 @@
 import "./index.css";
 import React, { useState, useEffect } from "react";
+import QuantileInput from "./QuantileInput";
 import Plot from "./Plot";
+import LogitNormalParameters from "./LogitNormalParameters";
 import References from "./References";
 
 const handleDeleteRow = (event) => {
@@ -22,7 +24,15 @@ const DeleteButton = () => {
 
 const App = () => {
     const [parameters, setParameters] = useState(false);
-    const [inputValues, setInputValues] = useState({ minGrade: "0", maxGrade: "100", quantiles: { 0.25: "66", "0.50": "80", 0.75: 89 } });
+    const [inputValues, setInputValues] = useState({
+        minGrade: "0",
+        maxGrade: "100",
+        quantiles: { 0.25: "66", "0.50": "80", 0.75: "89" },
+        cumulative: "",
+        probability: "",
+        quantile: "",
+        value: "",
+    });
     const [summaryTableExpanded, setSummaryTableExpanded] = useState(false);
     const [parametersTableExpanded, setParametersTableExpanded] = useState(false);
     const [rows, setRows] = useState([]);
@@ -113,18 +123,8 @@ const App = () => {
                                     <b>Grade</b>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Min Possible</td>
-                                <td>
-                                    <input id="minGrade" placeholder="0" type="text" onChange={handleChange} />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Max Possible</td>
-                                <td>
-                                    <input id="maxGrade" placeholder="100" type="text" onChange={handleChange} />
-                                </td>
-                            </tr>
+                            <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
+                            <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
                             <tr>
                                 <td>0.25</td>
                                 <td>
@@ -243,35 +243,7 @@ const App = () => {
                 </div>
                 <div>
                     <Plot parameters={parameters} />
-                    <div>
-                        <table>
-                            <colgroup>
-                                <col style={{ width: "40%" }} />
-                                <col style={{ width: "40%" }} />
-                                <col style={{ width: "20%" }} />
-                            </colgroup>
-                            <tbody>
-                                <tr>
-                                    <td colSpan="2">
-                                        <b>Logit-Normal Parameters</b>
-                                    </td>
-                                    <td style={{ border: "none", backgroundColor: "transparent", padding: "0px" }}>
-                                        <button type="button" onClick={toggleDisplayParametersTable}>
-                                            {parametersTableExpanded ? "collapse" : "expand"}
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Mean</td>
-                                    <td>{parametersTableExpanded ? parameters?.mean_logit_norm : parameters?.mean_logit_norm?.toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td>Standard Deviation</td>
-                                    <td>{parametersTableExpanded ? parameters?.std_logit_norm : parameters?.std_logit_norm?.toFixed(2)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <LogitNormalParameters parameters={parameters} isExpanded={parametersTableExpanded} onToggle={setParametersTableExpanded} />
                     <br></br>
                     <br></br>
                     <References />
