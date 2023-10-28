@@ -1,6 +1,7 @@
 import "./index.css";
 import React, { useState, useEffect } from "react";
 import Plot from "./Plot";
+import References from "./References";
 
 const handleDeleteRow = (event) => {
     const row = event.target.closest("tr");
@@ -68,7 +69,7 @@ const App = () => {
             return;
         }
 
-        fetch("/parameters", {
+        fetch("http://willb256.pythonanywhere.com/parameters", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -273,26 +274,7 @@ const App = () => {
                     </div>
                     <br></br>
                     <br></br>
-                    <div>
-                        <b>References: </b>
-                    </div>
-                    <br></br>
-                    <div>Stanford Computer Science and GradeScope Researchers on the Logit-Normal for Grade Distribution:</div>
-                    <br></br>
-                    <div>
-                        <a href="https://files.eric.ed.gov/fulltext/ED599204.pdf">https://files.eric.ed.gov/fulltext/ED599204.pdf</a>
-                        &nbsp;(Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris; 2019)
-                    </div>
-                    <br></br>
-                    <br></br>
-                    <div>SAS Distinguished Researcher on Fitting a Distribution from Quantiles using Weighted Least Square Estimation:</div>
-                    <br></br>
-                    <div>
-                        <a href="https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html">
-                            https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html
-                        </a>
-                        &nbsp;(Rick Wicklin; 2018)
-                    </div>
+                    <References />
                 </div>
             </div>
         </>

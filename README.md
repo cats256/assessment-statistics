@@ -15,6 +15,9 @@ Stanford Computer Science and GradeScope Researchers on the Logit-Normal for Gra
 https://files.eric.ed.gov/fulltext/ED599204.pdf (Arthurs, Noah; Stenhaug, Ben; Karayev, Sergey; Piech, Chris )
 
 
+## There's a limitation mentioned by the author in the paper with the logit-normal, where it can't model the maximum and minimum very well. I think I figured out a better distribution which is the compound distribution between the binomial and the logit-normal. Think how assessments usually contain limited number of questions, each of them can be modeled as n trials in the binomial. Not very good explanation yet but I will have to put this on hold for now as I am short on time.
+
+
 SAS Distinguished Researcher on Fitting a Distribution from Quantiles with Weighted Least Square Estimates:
 
 https://blogs.sas.com/content/iml/2018/03/07/fit-distribution-matching-quantile.html (Rick Wicklin)
