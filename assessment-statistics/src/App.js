@@ -90,99 +90,80 @@ const App = () => {
             <div className="statistics">
                 {width <= 1280 && <Plot parameters={parameters} />}
                 <div className="left-panel">
-                    <div style={{ position: "relative", flex: "1 1 0", overflow: "auto" }}>
-                        <table
-                            style={
-                                {
-                                    // position: "absolute",
-                                    // height: "100%",
-                                    // width: "100%",
-                                    // left: 0,
-                                    // top: 0,
-                                    // tableLayout: "fixed",
-                                    // borderCollapse: "collapse",
-                                }
-                            }
-                        >
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <b>Quantile</b>
-                                    </td>
-                                    <td>
-                                        <b>Grade</b>
-                                    </td>
-                                </tr>
-                                <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
-                                <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
-                                {Object.entries(inputValues.quantiles).map(([quantile, value]) => (
-                                    <QuantileInput
-                                        key={quantile}
-                                        label={quantile}
-                                        id={quantile}
-                                        value={value}
-                                        onChange={handleChange}
-                                        onDelete={() => handleDeleteQuantile(quantile)}
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <b>Quantile</b>
+                                </td>
+                                <td>
+                                    <b>Grade</b>
+                                </td>
+                            </tr>
+                            <QuantileInput label="Min Possible" id="minGrade" onChange={handleChange} />
+                            <QuantileInput label="Max Possible" id="maxGrade" onChange={handleChange} />
+                            {Object.entries(inputValues.quantiles).map(([quantile, value]) => (
+                                <QuantileInput
+                                    key={quantile}
+                                    label={quantile}
+                                    id={quantile}
+                                    value={value}
+                                    onChange={handleChange}
+                                    onDelete={() => handleDeleteQuantile(quantile)}
+                                />
+                            ))}
+                            <QuantileInput
+                                label="x"
+                                id="cumulative"
+                                value={inputValues.cumulative}
+                                onChange={handleChange}
+                            />
+                            <QuantileInput
+                                label="P(x)"
+                                id="probability"
+                                value={inputValues.probability}
+                                onChange={handleChange}
+                            />
+                            <tr>
+                                <td>
+                                    <input id="quantile" type="text" value={inputValues.quantile} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <input id="value" type="text" value={inputValues.value} onChange={handleChange} />
+                                </td>
+                                <td>
+                                    <button type="button" onClick={handleAddQuantile}>
+                                        add
+                                    </button>
+                                </td>
+                            </tr>
+                            <SummaryStatistics
+                                parameters={parameters}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
+                            />
+                            <QuantileValues
+                                parameters={parameters}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
+                            />
+                            <ModelPerformance
+                                parameters={parameters}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
+                            />
+                            {width < 1280 && (
+                                <>
+                                    <TransparentRow />
+                                    <LogitNormalRow
+                                        parameters={parameters}
+                                        isExpanded={parametersTableExpanded}
+                                        toggleTableExpand={setParametersTableExpanded}
                                     />
-                                ))}
-                                <QuantileInput
-                                    label="x"
-                                    id="cumulative"
-                                    value={inputValues.cumulative}
-                                    onChange={handleChange}
-                                />
-                                <QuantileInput
-                                    label="P(x)"
-                                    id="probability"
-                                    value={inputValues.probability}
-                                    onChange={handleChange}
-                                />
-                                <tr>
-                                    <td>
-                                        <input
-                                            id="quantile"
-                                            type="text"
-                                            value={inputValues.quantile}
-                                            onChange={handleChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input id="value" type="text" value={inputValues.value} onChange={handleChange} />
-                                    </td>
-                                    <td>
-                                        <button type="button" onClick={handleAddQuantile}>
-                                            add
-                                        </button>
-                                    </td>
-                                </tr>
-                                <SummaryStatistics
-                                    parameters={parameters}
-                                    isExpanded={summaryTableExpanded}
-                                    toggleTableExpand={setSummaryTableExpanded}
-                                />
-                                <QuantileValues
-                                    parameters={parameters}
-                                    isExpanded={summaryTableExpanded}
-                                    toggleTableExpand={setSummaryTableExpanded}
-                                />
-                                <ModelPerformance
-                                    parameters={parameters}
-                                    isExpanded={summaryTableExpanded}
-                                    toggleTableExpand={setSummaryTableExpanded}
-                                />
-                                {width < 1280 && (
-                                    <>
-                                        <TransparentRow />
-                                        <LogitNormalRow
-                                            parameters={parameters}
-                                            isExpanded={parametersTableExpanded}
-                                            toggleTableExpand={setParametersTableExpanded}
-                                        />
-                                    </>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                </>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
                 <div className="right-panel">
                     {!(width <= 1280) && (

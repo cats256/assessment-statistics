@@ -103,8 +103,13 @@ table tr td:nth-child(3) {
         width: 100%;
     }
 
-    /* .left-panel {
+    .left-panel {
         display: flex;
         justify-content: center;
-    } */
+    }
+
+    table {
+        display: flex;
+        flex-shrink: 1;
+    }
 }
