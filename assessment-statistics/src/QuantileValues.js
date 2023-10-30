@@ -1,14 +1,11 @@
 import React from "react";
 import ParameterRow from "./ParameterRow";
+import TransparentRow from "./TransparentRow";
 
 const QuantileValues = ({ parameters, isExpanded, toggleTableExpand }) => {
     return (
         <>
-            <tr>
-                <td colSpan="3" style={{ border: "none", backgroundColor: "transparent" }}>
-                    &nbsp;
-                </td>
-            </tr>
+            <TransparentRow />
             <tr>
                 <td colSpan="1">
                     <b>Observed</b>
