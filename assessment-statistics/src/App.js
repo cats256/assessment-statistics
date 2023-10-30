@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import QuantileInput from "./QuantileInput";
 import SummaryStatistics from "./SummaryStatistics";
 import ModelPerformance from "./ModelPerformance";
+import QuantileValues from "./QuantileValues";
 import Plot from "./Plot";
 import LogitNormalParameters from "./LogitNormalParameters";
 import References from "./References";
@@ -132,6 +133,11 @@ const App = () => {
                                 </td>
                             </tr>
                             <SummaryStatistics
+                                parameters={parameters}
+                                isExpanded={summaryTableExpanded}
+                                toggleTableExpand={setSummaryTableExpanded}
+                            />
+                            <QuantileValues
                                 parameters={parameters}
                                 isExpanded={summaryTableExpanded}
                                 toggleTableExpand={setSummaryTableExpanded}
