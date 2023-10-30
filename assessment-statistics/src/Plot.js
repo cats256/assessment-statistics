@@ -9,9 +9,11 @@ const Plot = ({ parameters }) => {
         yaxis: {
             title: "Probability Density Function",
         },
-        width: 809,
+        width: 800,
         height: 500,
     };
+
+    const config = { responsive: true };
 
     let data = [];
 
@@ -43,7 +45,7 @@ const Plot = ({ parameters }) => {
         data = [trace1, trace2, trace3];
     }
 
-    return <PlotlyPlot data={data} layout={layout} />;
+    return <PlotlyPlot data={data} layout={layout} config={config} />;
 };
 
 export default Plot;

@@ -5,8 +5,10 @@ import SummaryStatistics from "./SummaryStatistics";
 import ModelPerformance from "./ModelPerformance";
 import QuantileValues from "./QuantileValues";
 import Plot from "./Plot";
+import LogitNormalRow from "./LogitNormalRow";
 import LogitNormalParameters from "./LogitNormalParameters";
 import References from "./References";
+import TransparentRow from "./TransparentRow";
 
 const App = () => {
     const [parameters, setParameters] = useState(false);
@@ -84,7 +86,10 @@ const App = () => {
         <>
             <h2>Assessment Statistics</h2>
             <div className="statistics">
-                <div>
+                <div className="plot-container responsive-plot">
+                    <Plot parameters={parameters} />
+                </div>
+                <div className="left-panel">
                     <table>
                         <tbody>
                             <tr>
@@ -147,16 +152,24 @@ const App = () => {
                                 isExpanded={summaryTableExpanded}
                                 toggleTableExpand={setSummaryTableExpanded}
                             />
+                            <TransparentRow />
+                            <LogitNormalRow
+                                parameters={parameters}
+                                isExpanded={parametersTableExpanded}
+                                toggleTableExpand={setParametersTableExpanded}
+                            />
                         </tbody>
                     </table>
                 </div>
-                <div>
-                    <Plot parameters={parameters} />
-                    <LogitNormalParameters
-                        parameters={parameters}
-                        isExpanded={parametersTableExpanded}
-                        toggleTableExpand={setParametersTableExpanded}
-                    />
+                <div className="right-panel">
+                    <div className="plot-container">
+                        <Plot parameters={parameters} />
+                        <LogitNormalParameters
+                            parameters={parameters}
+                            isExpanded={parametersTableExpanded}
+                            toggleTableExpand={setParametersTableExpanded}
+                        />
+                    </div>
                     <References />
                 </div>
             </div>

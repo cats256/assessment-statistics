@@ -52,7 +52,8 @@ print(hist_plot)
 
 x_values <- seq(0, 40, by = 1)
 
-pdf_values <- dbln(x_values, 40, 1.0955405, 0.5767234)
+# pdf_values <- dbln(x_values, 40, 1.0955405, 0.5767234)
+pdf_values <- dbln(x_values, 40, 0.1, 1)
 pdf_data <- data.frame(x = x_values, y = pdf_values)
 
 print(pdf_data)

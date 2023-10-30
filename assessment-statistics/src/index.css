@@ -1,7 +1,7 @@
 body {
     margin: 0;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+        "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -52,7 +52,17 @@ button {
 
 .statistics {
     display: flex;
-    gap: 80px;
+    gap: 64px;
+    margin-left: 64px;
+    margin-right: 64px;
+}
+
+.plot-container {
+    width: 100%;
+}
+
+.responsive-plot {
+    display: none;
 }
 
 table {
@@ -88,4 +98,35 @@ tr:nth-child(odd) td {
 table tr td:nth-child(3) {
     border: none;
     background-color: transparent;
+}
+
+td,
+th {
+    width: auto;
+}
+
+@media (max-width: 1280px) {
+    .statistics {
+        flex-direction: column;
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+    }
+
+    .right-panel .plot-container {
+        display: none;
+    }
+
+    .responsive-plot {
+        display: flex;
+        margin-bottom: 32px;
+        justify-content: center;
+    }
+
+    .left-panel {
+        display: flex;
+        justify-content: center;
+    }
 }
