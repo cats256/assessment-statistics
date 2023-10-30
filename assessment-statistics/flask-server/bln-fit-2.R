@@ -33,7 +33,8 @@ hist_plot <- ggplot(data_df, aes(x = value)) +
   labs(title = 'Normalized Histogram of College Entrance Exam Scores in Vietnam 2019 Civics Subject',
        x = 'Score (Scaled by 4 due to ggplot issue)',
        y = 'Probabillity Mass (Normalized from Frequency)') +
-  xlim(min(data), max(data)) +
+  xlim(-0.5, 40.5) +
+  ylim(0, 0.09) +
   theme_minimal()
 
 print(hist_plot)
@@ -61,6 +62,8 @@ plot <- ggplot(pdf_data, aes(x = x, y = y)) +
     labs(title = 'PMF of Binomial-Logit-Normal Compound Distribution with mu = 1.0955405 and sigma = 0.5767234',
        x = 'Score (Scaled by 4 due to ggplot issue)',
         y = 'Probability Mass') +
+    xlim(-0.5, 40.5) +
+    ylim(0, 0.09) +
     theme_minimal()
 
 print(plot)
