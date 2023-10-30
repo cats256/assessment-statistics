@@ -11,7 +11,7 @@ const References = () => {
             <br></br>
             <div>
                 <a href="https://github.com/cats256/assessment-statistics/#readme" target="_blank" rel="noopener noreferrer">
-                    https://github.com/cats256/assessment-statistics
+                    Link
                 </a>
                 &nbsp;(explanations on methodology is located in README.md)
             </div>
