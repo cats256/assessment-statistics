@@ -25,10 +25,15 @@ neg_log_likelihood_bln_vectorized <- function(params, frequencies, size) {
     std <- params[2]
 
     log_likelihood <- 0
-    for (i in 0:size) {
+    for (i in 1:size) {
         log_likelihood <- log_likelihood + (log(dbln(i, size, mean, std)) * frequencies[i + 1])
+        # print(log(dbln(i, size, mean, std)))
+        # print("Frequencies: ")
+        # print(i + 1)
+        # print(frequencies[i + 1])
+        # print(log_likelihood)
     }
-
+    
     return(-log_likelihood)
 }
 
@@ -44,7 +49,7 @@ frequencies <- as.vector(frequency_table)
 
 print(frequency_table)
 
-initial_params <- c(mean = 1.0955405, std = 0.5767234)
+initial_params <- c(mean = 0.4171083, std = 0.4208499)
 
 result <- optim(par = initial_params, fn = neg_log_likelihood_bln_vectorized, frequencies = frequencies, size = 40)
 
