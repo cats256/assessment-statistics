@@ -20,10 +20,40 @@ neg_log_likelihood_bln <- function(params, samples, size) {
     return(-log_likelihood_bln(samples, size, mean, std))
 }
 
-data <- read.csv("diemthi2019.csv")
-data <- na.omit(data$Sinh) * 4 + 0.5
+neg_log_likelihood_bln_vectorized <- function(params, frequencies, size) {
+    mean <- params[1]
+    std <- params[2]
 
-data_df <- data.frame(value = data)
+    log_likelihood <- 0
+    for (i in 0:size) {
+        log_likelihood <- log_likelihood + (log(dbln(i, size, mean, std)) * frequencies[i + 1])
+    }
+
+    return(-log_likelihood)
+}
+
+data <- read.csv("diemthi2019.csv")
+data <- na.omit(data$GDCD) * 4
+data <- data[data == floor(data)]
+
+# set.seed(1)
+# data <- sample(data, size = 100)
+
+frequency_table <- table(data)
+frequencies <- as.vector(frequency_table)
+
+print(frequency_table)
+
+initial_params <- c(mean = 1.0955405, std = 0.5767234)
+
+result <- optim(par = initial_params, fn = neg_log_likelihood_bln_vectorized, frequencies = frequencies, size = 40)
+
+print(result)
+# print(neg_log_likelihood_bln_vectorized(c(1.0955405, 0.5767234), frequencies, 40))
+# print(neg_log_likelihood_bln(c(1.0955405, 0.5767234), data, 40))
+
+
+data_df <- data.frame(value = data + 0.5)
 
 hist_plot <- ggplot(data_df, aes(x = value)) +
   geom_histogram(aes(y = ..density..), binwidth = 1, fill = 'skyblue', color = 'white', boundary = 0.5) +
@@ -36,18 +66,10 @@ hist_plot <- ggplot(data_df, aes(x = value)) +
 
 print(hist_plot)
 
-# set.seed(1)
-# data <- sample(data, size = 100)
-
-initial_params <- c(mean = 1.0955405, std = 0.5767234)
-
-result <- optim(par = initial_params, fn = neg_log_likelihood_bln, samples = data, size = 40)
-
-print(result)
-
 # plot
 
-x_values <- seq(0, 40, by = 1)
+# biology parameters
+# pdf_values <- dbln(x_values, 40, -0.1379180, 0.4104577)
 
 # physics parameters
 # pdf_values <- dbln(x_values, 40, 0.3013156, 0.6304329)
@@ -55,19 +77,19 @@ x_values <- seq(0, 40, by = 1)
 # civics parameters
 # pdf_values <- dbln(x_values, 40, 1.0955405, 0.5767234)
 
-# pdf_values <- dbln(x_values, 40, 0.3013156, 0.6304329)
-# pdf_data <- data.frame(x = x_values, y = pdf_values)
+x_values <- seq(0, 40, by = 1)
 
-# print(pdf_data)
+pdf_values <- dbln(x_values, 40, result$par[1], result$par[2])
+pdf_data <- data.frame(x = x_values, y = pdf_values)
 
-# plot <- ggplot(pdf_data, aes(x = x, y = y)) +
-#     geom_col(width = 1, fill = 'skyblue', color = 'white') +
-#     labs(title = 'PMF of Binomial-Logit-Normal Compound Distribution with mu = 1.0955405 and sigma = 0.5767234',
-#        x = 'Score (Scaled by 4 due to ggplot issue)',
-#         y = 'Probability Mass') +
-#     xlim(-0.5, 40.5) +
-#     ylim(0, 0.09) +
-#     theme_minimal()
+plot <- ggplot(pdf_data, aes(x = x, y = y)) +
+    geom_col(width = 1, fill = 'skyblue', color = 'white') +
+    labs(title = 'PMF of Binomial-Logit-Normal Compound Distribution with mu = 1.0955405 and sigma = 0.5767234',
+       x = 'Score (Scaled by 4 due to ggplot issue)',
+        y = 'Probability Mass') +
+    xlim(-0.5, 40.5) +
+    ylim(0, 0.09) +
+    theme_minimal()
 
-# print(plot)
+print(plot)
 
