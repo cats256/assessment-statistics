@@ -1,0 +1,1 @@
+Ever wondered how to fit a logit-normal distribution given its quantiles? For example, fitting a grade distribution on an exam given their upper quartile, median, and lower quartile? Or how well you do relative to your classmate on an assessment? Then you have come to the right place. This webapp is able to predict academic performance and grade distribution given quantile inputs
