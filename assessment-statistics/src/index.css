@@ -15,7 +15,7 @@ code {
 }
 
 #root {
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     align-items: center;
     margin-top: 16px;
@@ -93,6 +93,12 @@ table tr td:nth-child(3) {
     background-color: transparent;
 }
 
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px; /* Adjust as needed */
+    margin-bottom: 20px; /* Adjust as needed */
+}
+
 @media (max-width: 1280px) {
     .statistics {
         flex-direction: column;
@@ -104,12 +110,27 @@ table tr td:nth-child(3) {
     }
 
     .left-panel {
-        display: flex;
+        /* display: flex; */
         justify-content: center;
     }
 
-    table {
+    /* table {
         display: flex;
         flex-shrink: 1;
+    } */
+    No longer apply flexbox to the table,
+    but to the container .table-container {
+        display: block; /* Remove this if you want to keep the default block display */
+    }
+
+    table {
+        width: auto; /* Adjust this as necessary */
+    }
+
+    /* Make sure the cells do not break your layout by having a minimum width */
+    th,
+    td {
+        min-width: 120px; /* Example minimum width */
+        white-space: nowrap; /* Prevents text from wrapping */
     }
 }

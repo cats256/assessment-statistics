@@ -86,9 +86,9 @@ const App = () => {
 
     return (
         <>
-            <h2>Assessment Statistics</h2>
+            <h2 style={{ textAlign: "center" }}>Assessment Statistics</h2>
             <div className="statistics">
-                {width <= 1280 && <Plot parameters={parameters} width={width} />}
+                <div className="table-container">{width <= 1280 && <Plot parameters={parameters} width={width} />}</div>
                 <div className="left-panel">
                     <table>
                         <tbody>
