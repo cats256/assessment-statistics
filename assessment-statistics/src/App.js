@@ -88,7 +88,7 @@ const App = () => {
         <>
             <h2>Assessment Statistics</h2>
             <div className="statistics">
-                {width <= 1280 && <Plot parameters={parameters} />}
+                {width <= 1280 && <Plot parameters={parameters} width={width} />}
                 <div className="left-panel">
                     <table>
                         <tbody>
@@ -168,7 +168,7 @@ const App = () => {
                 <div className="right-panel">
                     {!(width <= 1280) && (
                         <>
-                            <Plot parameters={parameters} />
+                            <Plot parameters={parameters} width={width} />
                             <LogitNormalParameters
                                 parameters={parameters}
                                 isExpanded={parametersTableExpanded}

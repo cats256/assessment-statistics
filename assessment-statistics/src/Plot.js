@@ -1,6 +1,6 @@
 import { default as PlotlyPlot } from "react-plotly.js";
 
-const Plot = ({ parameters }) => {
+const Plot = ({ parameters, width }) => {
     const layout = {
         title: "Estimated Grade Distribution",
         xaxis: {
@@ -9,8 +9,13 @@ const Plot = ({ parameters }) => {
         yaxis: {
             title: "Probability Density Function",
         },
-        width: 800,
-        height: 500,
+        responsive: true,
+        useResizeHandler: true,
+        autosize: true,
+        font: {
+            family: "Inter",
+            size: width / 128,
+        },
     };
 
     const config = { responsive: true };
@@ -45,7 +50,7 @@ const Plot = ({ parameters }) => {
         data = [trace1, trace2, trace3];
     }
 
-    return <PlotlyPlot data={data} layout={layout} config={config} />;
+    return <PlotlyPlot data={data} layout={layout} config={config} style={{ width: "100%", aspectRatio: "1.61803" }} />;
 };
 
 export default Plot;

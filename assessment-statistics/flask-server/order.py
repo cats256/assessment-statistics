@@ -25,7 +25,7 @@ def likelihood(N):
     return log_likelihood
 
 
-print(math.factorial(101))
-print(neg_log_likelihood2(101))
+# print(math.factorial(101))
+# print(neg_log_likelihood2(101))
 print(np.exp(neg_log_likelihood2(100) + gammaln(100 + 1)))
 print(likelihood(100))
