@@ -28,7 +28,7 @@ const Plot = ({ parameters, width }) => {
             y: parameters.y_values,
             mode: "lines",
             name: "Scaled Logit-Normal",
-            showlegend: true,
+            showlegend: false,
         };
 
         const trace2 = {
@@ -37,6 +37,9 @@ const Plot = ({ parameters, width }) => {
             mode: "markers",
             name: "Observed Quantiles",
             showlegend: true,
+            marker: {
+                size: 6,
+            },
         };
 
         const trace3 = {
@@ -45,6 +48,9 @@ const Plot = ({ parameters, width }) => {
             mode: "markers",
             name: "Expected Quantiles",
             showlegend: true,
+            marker: {
+                size: 6,
+            },
         };
 
         data = [trace1, trace2, trace3];
